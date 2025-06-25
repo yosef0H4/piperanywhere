@@ -131,17 +131,17 @@ class PiperDependenciesInstaller {
     )
     
     __New() {
-        this.currentPage := "welcome"
+        this.currentPage := "pathselect"
+        this.installPath := A_ScriptDir . "\piperAnywhere"  ; Default installation path
         this.dependencies := Map(
-            "piper", {status: "Checking...", exists: false, path: A_ScriptDir . "\piper\piper.exe"},
-            "ffmpeg", {status: "Checking...", exists: false, path: A_ScriptDir . "\ffmpeg\bin\ffmpeg.exe"},
-            "ffplay", {status: "Checking...", exists: false, path: A_ScriptDir . "\ffmpeg\bin\ffplay.exe"},
-            "voices", {status: "Checking...", exists: false, path: A_ScriptDir . "\voices"}
+            "piper", {status: "Not checked", exists: false, path: ""},
+            "ffmpeg", {status: "Not checked", exists: false, path: ""},
+            "ffplay", {status: "Not checked", exists: false, path: ""},
+            "voices", {status: "Not checked", exists: false, path: ""}
         )
         
         this.CreateGUI()
-        this.CheckDependencies()
-        this.ShowWelcomePage()
+        this.ShowPathSelectPage()
     }
     
     CreateGUI() {
@@ -155,6 +155,7 @@ class PiperDependenciesInstaller {
         this.controls := Map()
         
         ; Create all page content (initially hidden)
+        this.CreatePathSelectPage()
         this.CreateWelcomePage()
         this.CreateLicensePage()
         this.CreateProgressPage()
@@ -168,21 +169,50 @@ class PiperDependenciesInstaller {
         this.gui.OnEvent("Size", ObjBindMethod(this, "OnResize"))
     }
     
+    CreatePathSelectPage() {
+        ; Header
+        this.controls["path_header"] := this.gui.AddText("x20 y20 w460 h25 Center", "Choose Installation Location")
+        this.controls["path_header"].SetFont("s12 Bold", "Segoe UI")
+        
+        this.controls["path_desc"] := this.gui.AddText("x20 y+10 w460 h40 Center", 
+            "Select where you want to install Piper TTS and its components.")
+        
+        ; Installation path section
+        this.controls["path_label"] := this.gui.AddText("x20 y+20 w460 h20", "Installation Path:")
+        this.controls["path_label"].SetFont("s10 Bold")
+        
+        ; Path input with browse button
+        this.controls["path_edit"] := this.gui.AddEdit("x20 y+5 w380 h25", this.installPath)
+        this.controls["path_browse"] := this.gui.AddButton("x+10 yp w70 h25", "Browse...")
+        this.controls["path_browse"].OnEvent("Click", ObjBindMethod(this, "BrowsePath"))
+        
+        ; Info text
+        this.controls["path_info"] := this.gui.AddText("x20 y+10 w460 h60", 
+            "• The installation path will automatically end with '\\piper'" . 
+            "`n• All components (Piper TTS, FFmpeg, voice models) will be installed in this location" .
+            "`n• Make sure you have write permissions to the selected folder")
+        this.controls["path_info"].SetFont("s8")
+        
+        ; Default path warning
+        this.controls["path_warning"] := this.gui.AddText("x20 y+10 w460 h25 cRed Hidden", 
+            "⚠ Warning: This will install to the current script directory")
+    }
+    
     CreateWelcomePage() {
         ; Header
-        this.controls["welcome_header"] := this.gui.AddText("x20 y20 w460 h25 Center", "Welcome to Piper TTS Installation Wizard")
+        this.controls["welcome_header"] := this.gui.AddText("x20 y20 w460 h25 Center Hidden", "Welcome to Piper TTS Installation Wizard")
         this.controls["welcome_header"].SetFont("s12 Bold", "Segoe UI")
         
-        this.controls["welcome_desc"] := this.gui.AddText("x20 y+10 w460 h40 Center", 
+        this.controls["welcome_desc"] := this.gui.AddText("x20 y+10 w460 h40 Center Hidden", 
             "This wizard will install Piper TTS, FFmpeg, and a sample voice model on your system.")
         
         ; Dependency status section
-        this.controls["dep_header"] := this.gui.AddText("x20 y+20 w460 h20", "Installation Status:")
+        this.controls["dep_header"] := this.gui.AddText("x20 y+20 w460 h20 Hidden", "Installation Status:")
         this.controls["dep_header"].SetFont("s10 Bold")
         
         ; Individual dependency status labels
         for name, info in this.dependencies {
-            this.controls["status_" . name] := this.gui.AddText("x30 y+5 w440 h20", 
+            this.controls["status_" . name] := this.gui.AddText("x30 y+5 w440 h20 Hidden", 
                 this.FormatDependencyName(name) . ": " . info.status)
         }
         
@@ -190,6 +220,11 @@ class PiperDependenciesInstaller {
         this.controls["all_installed"] := this.gui.AddText("x20 y+15 w460 h25 Center Hidden", 
             "✅ All components are already installed!")
         this.controls["all_installed"].SetFont("s10 Bold cGreen")
+        
+        ; Installation path display
+        this.controls["install_path_display"] := this.gui.AddText("x20 y+20 w460 h40 Hidden", 
+            "Installation Path: " . this.installPath)
+        this.controls["install_path_display"].SetFont("s9", "Consolas")
     }
     
     CreateLicensePage() {
@@ -262,11 +297,37 @@ class PiperDependenciesInstaller {
     }
     
     ; Page Management Methods
+    ShowPathSelectPage() {
+        this.HideAllPages()
+        this.controls["path_header"].Visible := true
+        this.controls["path_desc"].Visible := true
+        this.controls["path_label"].Visible := true
+        this.controls["path_edit"].Visible := true
+        this.controls["path_browse"].Visible := true
+        this.controls["path_info"].Visible := true
+        
+        ; Show warning if using script directory
+        if (this.installPath = A_ScriptDir . "\piper") {
+            this.controls["path_warning"].Visible := true
+        } else {
+            this.controls["path_warning"].Visible := false
+        }
+        
+        this.controls["btn_back"].Enabled := false
+        this.controls["btn_next"].Enabled := true
+        this.controls["btn_next"].Text := "&Next >"
+        this.currentPage := "pathselect"
+        
+        ; Update path edit control
+        this.controls["path_edit"].Text := this.installPath
+    }
+    
     ShowWelcomePage() {
         this.HideAllPages()
         this.controls["welcome_header"].Visible := true
         this.controls["welcome_desc"].Visible := true
         this.controls["dep_header"].Visible := true
+        this.controls["install_path_display"].Visible := true
         
         for name, info in this.dependencies {
             this.controls["status_" . name].Visible := true
@@ -284,6 +345,9 @@ class PiperDependenciesInstaller {
         this.controls["btn_next"].Enabled := true
         this.currentPage := "welcome"
         this.UpdateDependencyDisplay()
+        
+        ; Update installation path display
+        this.controls["install_path_display"].Text := "Installation Path: " . this.installPath
     }
     
     ShowLicensePage() {
@@ -364,6 +428,9 @@ class PiperDependenciesInstaller {
     ; Navigation Event Handlers
     GoNext(*) {
         switch this.currentPage {
+            case "pathselect":
+                this.ValidateAndSetPath()
+                this.ShowWelcomePage()
             case "welcome":
                 if (this.AllDependenciesInstalled()) {
                     this.OnClose()
@@ -381,6 +448,8 @@ class PiperDependenciesInstaller {
     
     GoBack(*) {
         switch this.currentPage {
+            case "welcome":
+                this.ShowPathSelectPage()
             case "license":
                 this.ShowWelcomePage()
             case "progress":
@@ -533,7 +602,7 @@ class PiperDependenciesInstaller {
         this.controls["progress_status"].Text := "Installing Piper TTS..."
         this.UpdateProgress(this.installStep++, "Preparing Piper TTS download...")
         
-        downloadDir := A_ScriptDir . "\downloads"
+        downloadDir := this.installPath . "\downloads"
         DirCreate(downloadDir)
         piperZip := downloadDir . "\piper_windows_amd64.zip"
         
@@ -551,16 +620,16 @@ class PiperDependenciesInstaller {
             
             ; Install step
             this.controls["progress_status"].Text := "Installing Piper TTS..."
-            this.UpdateProgress(this.installStep++, "Moving Piper TTS to final location...")
+            this.UpdateProgress(this.installStep++, "Installing Piper TTS to " . this.installPath . "...")
             
             ; Move to final location
             extractedDir := downloadDir . "\piper"
-            targetDir := A_ScriptDir . "\piper"
+            targetDir := this.installPath . "\piper"
             
-            if (DirExist(targetDir)) {
-                DirDelete(targetDir, true)
-                this.LogProgress("Removed existing Piper installation.")
-            }
+            
+            ; Ensure parent directory exists
+            SplitPath(targetDir, , &parentDir)
+            DirCreate(parentDir)
             DirMove(extractedDir, targetDir, 2)
             
             this.Set("piperInstalled", true)
@@ -597,7 +666,7 @@ class PiperDependenciesInstaller {
             
             ; Install step
             this.controls["progress_status"].Text := "Installing FFmpeg..."
-            this.UpdateProgress(this.installStep++, "Moving FFmpeg to final location...")
+            this.UpdateProgress(this.installStep++, "Installing FFmpeg to " . this.installPath . "...")
             
             ; Find extracted directory (name may vary)
             extractedDir := ""
@@ -612,11 +681,14 @@ class PiperDependenciesInstaller {
             }
             
             ; Move to final location
-            targetDir := A_ScriptDir . "\ffmpeg"
+            targetDir := this.installPath . "\ffmpeg"
             if (DirExist(targetDir)) {
                 DirDelete(targetDir, true)
                 this.LogProgress("Removed existing FFmpeg installation.")
             }
+            ; Ensure parent directory exists
+            SplitPath(targetDir, , &parentDir)
+            DirCreate(parentDir)
             DirMove(extractedDir, targetDir, 2)
             
             this.Set("ffmpegInstalled", true)
@@ -636,7 +708,7 @@ class PiperDependenciesInstaller {
         this.UpdateProgress(this.installStep++, "Preparing voice model downloads...")
         
         downloadDir := A_ScriptDir . "\downloads"
-        voicesDir := A_ScriptDir . "\voices"
+        voicesDir := this.installPath . "\voices"
         DirCreate(downloadDir)
         DirCreate(voicesDir)
         
@@ -692,9 +764,9 @@ class PiperDependenciesInstaller {
         ; Final progress update - ensure we hit exactly 100%
         this.controls["progress_bar"].Value := 100
         this.controls["progress_status"].Text := "Installation completed successfully!"
-        this.controls["progress_detail"].Text := "100% complete - All components installed"
+        this.controls["progress_detail"].Text := "100% complete - All components installed to " . this.installPath
         this.LogProgress("🎉 Installation completed successfully!")
-        this.LogProgress("All required components have been installed and are ready to use.")
+        this.LogProgress("All required components have been installed to: " . this.installPath)
         
         ; Re-check dependencies
         this.CheckDependencies()
@@ -920,11 +992,51 @@ class PiperDependenciesInstaller {
             ; Replace placeholder with actual copyright notice
             licenseContent := StrReplace(licenseContent, "[realname]", "[realname]")  ; User will replace this
             
-            FileAppend(licenseContent, A_ScriptDir . "\LICENSE.txt", "UTF-8")
+            FileAppend(licenseContent, this.installPath . "\LICENSE.txt", "UTF-8")
             this.LogProgress("Created main program LICENSE.txt file")
         } catch as e {
             this.LogProgress("Warning: Could not create LICENSE.txt file: " . e.Message)
         }
+    }
+    
+    ; Path Selection Methods
+    BrowsePath(*) {
+        ; Get initial directory (parent of current install path)
+        currentPath := this.controls["path_edit"].Text
+        if (currentPath && DirExist(currentPath)) {
+            initialDir := currentPath
+        } else {
+            ; Use parent directory or C:\ as fallback
+            SplitPath(currentPath, , &parentDir)
+            initialDir := (parentDir && DirExist(parentDir)) ? parentDir : "C:\"
+        }
+        
+        selectedFolder := FileSelect("D", initialDir, "Select a folder")
+        if (selectedFolder) {
+            ; Ensure the path ends with \piper
+            if (!RegExMatch(selectedFolder, "\\piper$", &match)) {
+                selectedFolder := selectedFolder . "\piper"
+            }
+            this.controls["path_edit"].Text := selectedFolder
+        }
+    }
+    
+    ValidateAndSetPath() {
+        newPath := this.controls["path_edit"].Text
+        ; Ensure path ends with \piper
+        if (!RegExMatch(newPath, "\\piper$", &match)) {
+            newPath := newPath . "\piper"
+        }
+        this.installPath := newPath
+        this.UpdateDependencyPaths()
+        this.CheckDependencies()
+    }
+    
+    UpdateDependencyPaths() {
+        this.dependencies["piper"].path := this.installPath . "\piper.exe"
+        this.dependencies["ffmpeg"].path := this.installPath . "\ffmpeg\bin\ffmpeg.exe"
+        this.dependencies["ffplay"].path := this.installPath . "\ffmpeg\bin\ffplay.exe"
+        this.dependencies["voices"].path := this.installPath . "\voices"
     }
 }
 

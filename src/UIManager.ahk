@@ -19,6 +19,12 @@ class UIManager {
         this.gui.MarginY := 8
         this.gui.SetFont("s9", "Segoe UI")
         
+        ; Create a MenuBar and a File menu
+        this.menuBar := MenuBar()
+        this.fileMenu := Menu()
+        this.menuBar.Add("&File", this.fileMenu)
+        this.gui.MenuBar := this.menuBar
+        
         ; Voice section
         this.CreateVoiceSection()
         
@@ -40,6 +46,12 @@ class UIManager {
         ; Store references for easy access
         this.voiceDropdown := this.controls.voiceDropdown
         this.statusLabel := this.controls.statusLabel
+        
+        ; Add menu items to the File menu
+        this.fileMenu.Add("💾 &Save Audio", ObjBindMethod(this, "OnSaveAudio"))
+        this.fileMenu.Add("ℹ️ &Dependencies", ObjBindMethod(this, "OnShowDependencyInfo"))
+        this.fileMenu.Add("❓ &Help", ObjBindMethod(this, "OnShowHelp"))
+        this.fileMenu.Add("✖️ &Exit", ObjBindMethod(this, "OnExit"))
     }
     
     CreateVoiceSection() {
@@ -89,7 +101,7 @@ class UIManager {
     }
     
     CreateControlButtons() {
-        buttonGroup := this.gui.AddGroupBox("x8 y232 w280 h70", "Controls")
+        buttonGroup := this.gui.AddGroupBox("x8 y232 w280 h60", "Controls")
         buttonGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; First row of buttons
@@ -99,31 +111,17 @@ class UIManager {
         this.controls.stopButton := this.gui.AddButton("x70 y250 w50 h24 Disabled", "⏹ Stop")
         this.controls.stopButton.SetFont("s8 Bold")
         
-        this.controls.saveButton := this.gui.AddButton("x124 y250 w50 h24", "💾 Save")
-        this.controls.saveButton.SetFont("s8 Bold")
         
-        this.controls.ocrButton := this.gui.AddButton("x178 y250 w50 h24", "👁 OCR")
-        this.controls.ocrButton.SetFont("s8 Bold")
-        
-        this.controls.exitButton := this.gui.AddButton("x232 y250 w50 h24", "✖ Exit")
-        this.controls.exitButton.SetFont("s8")
-        
-        ; Second row - Info and diagnostic buttons
-        this.controls.infoButton := this.gui.AddButton("x16 y276 w70 h20", "ℹ️ Dependencies")
-        this.controls.infoButton.SetFont("s7")
-        
-        this.controls.helpButton := this.gui.AddButton("x90 y276 w50 h20", "❓ Help")
-        this.controls.helpButton.SetFont("s7")
     }
     
     CreateStatusSection() {
-        this.controls.statusLabel := this.gui.AddText("x8 y308 w280 h16 Center", "Ready")
+        this.controls.statusLabel := this.gui.AddText("x8 y276 w280 h16 Center", "Ready")
         this.controls.statusLabel.SetFont("s8", "Segoe UI")
         
-        this.controls.qualityLabel := this.gui.AddText("x8 y324 w280 h16 Center", "")
+        this.controls.qualityLabel := this.gui.AddText("x8 y292 w280 h16 Center", "")
         this.controls.qualityLabel.SetFont("s7", "Segoe UI")
         
-        this.controls.hintLabel := this.gui.AddText("x8 y340 w280 h32 Center", 
+        this.controls.hintLabel := this.gui.AddText("x8 y308 w280 h32 Center", 
                                               "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+S (Stop)")
         this.controls.hintLabel.SetFont("s7", "Segoe UI")
     }
@@ -139,13 +137,6 @@ class UIManager {
         this.controls.volumeInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnVolumeInputChanged"))
         this.controls.playButton.OnEvent("Click", ObjBindMethod(this, "OnPlayText"))
         this.controls.stopButton.OnEvent("Click", ObjBindMethod(this, "OnStopPlayback"))
-        this.controls.saveButton.OnEvent("Click", ObjBindMethod(this, "OnSaveAudio"))
-        this.controls.ocrButton.OnEvent("Click", ObjBindMethod(this, "OnStartOCR"))
-        this.controls.exitButton.OnEvent("Click", ObjBindMethod(this, "OnExit"))
-        
-        ; New event handlers
-        this.controls.infoButton.OnEvent("Click", ObjBindMethod(this, "OnShowDependencyInfo"))
-        this.controls.helpButton.OnEvent("Click", ObjBindMethod(this, "OnShowHelp"))
         
         ; GUI close event
         this.gui.OnEvent("Close", ObjBindMethod(this, "OnExit"))
@@ -300,7 +291,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w296 h380")  ; Increased height for new buttons
+        this.gui.Show("w296 h345")
     }
     
     GetTextBox() {
