@@ -1,0 +1,6 @@
+piper/
+ffmpeg/
+*.wav
+voices/
+*.ini
+Lib/

@@ -1,0 +1,56 @@
+class HotkeyManager {
+    
+    __New(ttsPlayer, ocrHandler, uiManager) {
+        this.ttsPlayer := ttsPlayer
+        this.ocrHandler := ocrHandler
+        this.uiManager := uiManager
+        this.SetupHotkeys()
+    }
+    
+    SetupHotkeys() {
+        ; Stop playback hotkey
+        HotKey("CapsLock & s", ObjBindMethod(this, "OnStopHotkey"))
+        
+        ; Copy and play hotkey
+        HotKey("CapsLock & c", ObjBindMethod(this, "OnCopyAndPlayHotkey"))
+        
+        ; OCR and play hotkey
+        HotKey("CapsLock & x", ObjBindMethod(this, "OnOCRAndPlayHotkey"))
+    }
+    
+    OnStopHotkey(*) {
+        this.ttsPlayer.StopPlayback(this.uiManager.controls.statusLabel, 
+                                   this.uiManager.controls.playButton, this.uiManager.controls.stopButton)
+    }
+    
+    OnCopyAndPlayHotkey(*) {
+        oldClipboard := A_Clipboard
+        A_Clipboard := ""
+        Send("^c")
+        
+        if (!ClipWait(1)) {
+            MsgBox("No text was selected.", "Copy Failed", "Iconx")
+            A_Clipboard := oldClipboard
+            return
+        }
+        
+        copiedText := A_Clipboard
+        A_Clipboard := oldClipboard
+        
+        if (copiedText = "" || StrLen(Trim(copiedText)) = 0) {
+            MsgBox("No text was copied.", "No Text", "Iconx")
+            return
+        }
+        
+        textBox := this.uiManager.GetTextBox()
+        textBox.Text := copiedText
+        this.uiManager.OnPlayText()
+    }
+    
+    OnOCRAndPlayHotkey(*) {
+        textBox := this.uiManager.GetTextBox()
+        if (this.ocrHandler.StartOCR(textBox)) {
+            this.uiManager.OnPlayText()
+        }
+    }
+} 

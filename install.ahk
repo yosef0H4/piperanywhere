@@ -1,0 +1,938 @@
+#Requires AutoHotkey v2.0
+
+/**
+ * Piper TTS Installation Wizard
+ * A modern, robust installer for Piper TTS with improved error handling,
+ * user experience, and following AHK v2 best practices
+ */
+
+class PiperDependenciesInstaller {
+    static VERSION := "2.0.0"
+    static WINDOW_WIDTH := 500
+    static WINDOW_HEIGHT := 400
+    
+    ; Download URLs
+    static PIPER_URL := "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip"
+    static FFMPEG_URL := "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.7z"
+    static VOICE_ONNX_URL := "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alba/medium/en_GB-alba-medium.onnx"
+    static VOICE_JSON_URL := "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alba/medium/en_GB-alba-medium.onnx.json"
+    
+    ; License data for each component
+    static LICENSE_DATA := Map(
+        "piperAnywhere", {
+            name: "piperAnywhere",
+            license: "GNU General Public License v3.0",
+            text: "GNU GENERAL PUBLIC LICENSE Version 3`n`n" .
+                  "piperAnywhere - An annotation program designed to make users use Piper TTS to read text anywhere`n`n" .
+                  "Copyright (C) 2025 [realname]`n`n" .
+                  "This program is free software: you can redistribute it and/or modify " .
+                  "it under the terms of the GNU General Public License as published by " .
+                  "the Free Software Foundation, either version 3 of the License, or " .
+                  "(at your option) any later version.`n`n" .
+                  "This program is distributed in the hope that it will be useful, " .
+                  "but WITHOUT ANY WARRANTY; without even the implied warranty of " .
+                  "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the " .
+                  "GNU General Public License for more details.`n`n" .
+                  "You should have received a copy of the GNU General Public License " .
+                  "along with this program. If not, see <https://www.gnu.org/licenses/>.`n`n" .
+                  "✅ LICENSE COMPATIBILITY: This GPL v3 license is fully compatible with " .
+                  "all dependencies (Piper TTS, eSpeak NG, FFmpeg) ensuring no licensing conflicts.`n`n" .
+                  "Source code: Available upon request or at distribution location`n" .
+                  "Contact: [your contact information]",
+            category: "Main Application"
+        },
+        
+        "piper", {
+            name: "Piper TTS",
+            license: "MIT License (with GPL dependencies)",
+            text: "MIT License`n`n" .
+                  "Copyright (c) 2022 Michael Hansen`n`n" .
+                  "Permission is hereby granted, free of charge, to any person obtaining a copy " .
+                  "of this software and associated documentation files (the `"Software`"), to deal " .
+                  "in the Software without restriction, including without limitation the rights " .
+                  "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell " .
+                  "copies of the Software, and to permit persons to whom the Software is " .
+                  "furnished to do so, subject to the following conditions:`n`n" .
+                  "The above copyright notice and this permission notice shall be included in all " .
+                  "copies or substantial portions of the Software.`n`n" .
+                  "THE SOFTWARE IS PROVIDED `"AS IS`", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR " .
+                  "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, " .
+                  "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE " .
+                  "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER " .
+                  "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, " .
+                  "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE " .
+                  "SOFTWARE.`n`n" .
+                  "⚠️ IMPORTANT: Piper depends on eSpeak NG (GPL v3) for phoneme processing. " .
+                  "This dependency may affect the licensing of the combined system.`n`n" .
+                  "Source: https://github.com/rhasspy/piper",
+            category: "Core Software"
+        },
+        
+        "espeak", {
+            name: "eSpeak NG",
+            license: "GNU General Public License v3.0",
+            text: "GNU GENERAL PUBLIC LICENSE Version 3`n`n" .
+                  "eSpeak NG Text-to-Speech is released under the GPL version 3 or later license.`n`n" .
+                  "This program is free software: you can redistribute it and/or modify " .
+                  "it under the terms of the GNU General Public License as published by " .
+                  "the Free Software Foundation, either version 3 of the License, or " .
+                  "(at your option) any later version.`n`n" .
+                  "This program is distributed in the hope that it will be useful, " .
+                  "but WITHOUT ANY WARRANTY; without even the implied warranty of " .
+                  "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the " .
+                  "GNU General Public License for more details.`n`n" .
+                  "⚠️ GPL REQUIREMENTS: This is a copyleft license. If you distribute software " .
+                  "containing GPL components, the entire work may need to be GPL-licensed and " .
+                  "source code made available.`n`n" .
+                  "Full license: https://www.gnu.org/licenses/gpl-3.0.html`n" .
+                  "Source: https://github.com/espeak-ng/espeak-ng",
+            category: "Core Software"
+        },
+        
+        "ffmpeg", {
+            name: "FFmpeg",
+            license: "GNU Lesser General Public License v2.1+",
+            text: "GNU LESSER GENERAL PUBLIC LICENSE Version 2.1`n`n" .
+                  "FFmpeg is licensed under the GNU Lesser General Public License (LGPL) " .
+                  "version 2.1 or later. However, FFmpeg incorporates several optional parts " .
+                  "and optimizations that are covered by the GNU General Public License (GPL) " .
+                  "version 2 or later. If those parts get used the GPL applies to all of FFmpeg.`n`n" .
+                  "LGPL COMPLIANCE REQUIREMENTS:`n" .
+                  "• You must provide attribution when using FFmpeg`n" .
+                  "• Source code must be made available if you distribute modified versions`n" .
+                  "• This software uses libraries from the FFmpeg project under the LGPLv2.1`n`n" .
+                  "ATTRIBUTION: This software uses code of FFmpeg licensed under the LGPLv2.1`n`n" .
+                  "Full license: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html`n" .
+                  "Source: https://github.com/FFmpeg/FFmpeg`n" .
+                  "Legal info: https://ffmpeg.org/legal.html",
+            category: "Media Processing"
+        },
+        
+        "voices", {
+            name: "Voice Models (Alba)",
+            license: "Creative Commons Attribution 4.0 International",
+            text: "Creative Commons Attribution 4.0 International (CC BY 4.0)`n`n" .
+                  "The Alba voice model is licensed under CC BY 4.0.`n" .
+                  "Original dataset: University of Edinburgh`n`n" .
+                  "You are free to:`n" .
+                  "• Share — copy and redistribute the material in any medium or format`n" .
+                  "• Adapt — remix, transform, and build upon the material`n" .
+                  "• Use for any purpose, even commercially`n`n" .
+                  "Under the following terms:`n" .
+                  "• Attribution — You must give appropriate credit, provide a link to the " .
+                  "license, and indicate if changes were made. You may do so in any reasonable " .
+                  "manner, but not in any way that suggests the licensor endorses you or your use.`n`n" .
+                  "ATTRIBUTION EXAMPLE:`n" .
+                  "`"Alba Voice Model`" by University of Edinburgh, licensed under CC BY 4.0`n`n" .
+                  "Full license: https://creativecommons.org/licenses/by/4.0/`n" .
+                  "Source: https://datashare.ed.ac.uk/handle/10283/3270",
+            category: "Voice Models"
+        }
+    )
+    
+    __New() {
+        this.currentPage := "welcome"
+        this.dependencies := Map(
+            "piper", {status: "Checking...", exists: false, path: A_ScriptDir . "\piper\piper.exe"},
+            "ffmpeg", {status: "Checking...", exists: false, path: A_ScriptDir . "\ffmpeg\bin\ffmpeg.exe"},
+            "ffplay", {status: "Checking...", exists: false, path: A_ScriptDir . "\ffmpeg\bin\ffplay.exe"},
+            "voices", {status: "Checking...", exists: false, path: A_ScriptDir . "\voices"}
+        )
+        
+        this.CreateGUI()
+        this.CheckDependencies()
+        this.ShowWelcomePage()
+    }
+    
+    CreateGUI() {
+        this.gui := Gui("+Resize -MaximizeBox", "Piper TTS Installer v" . PiperDependenciesInstaller.VERSION)
+        this.gui.BackColor := "White"
+        this.gui.MarginX := 20
+        this.gui.MarginY := 20
+        this.gui.SetFont("s9", "Segoe UI")
+        
+        ; Store all controls for easy management
+        this.controls := Map()
+        
+        ; Create all page content (initially hidden)
+        this.CreateWelcomePage()
+        this.CreateLicensePage()
+        this.CreateProgressPage()
+        this.CreateCompletePage()
+        
+        ; Navigation buttons (always visible)
+        this.CreateNavigationButtons()
+        
+        ; Event handlers
+        this.gui.OnEvent("Close", ObjBindMethod(this, "OnClose"))
+        this.gui.OnEvent("Size", ObjBindMethod(this, "OnResize"))
+    }
+    
+    CreateWelcomePage() {
+        ; Header
+        this.controls["welcome_header"] := this.gui.AddText("x20 y20 w460 h25 Center", "Welcome to Piper TTS Installation Wizard")
+        this.controls["welcome_header"].SetFont("s12 Bold", "Segoe UI")
+        
+        this.controls["welcome_desc"] := this.gui.AddText("x20 y+10 w460 h40 Center", 
+            "This wizard will install Piper TTS, FFmpeg, and a sample voice model on your system.")
+        
+        ; Dependency status section
+        this.controls["dep_header"] := this.gui.AddText("x20 y+20 w460 h20", "Installation Status:")
+        this.controls["dep_header"].SetFont("s10 Bold")
+        
+        ; Individual dependency status labels
+        for name, info in this.dependencies {
+            this.controls["status_" . name] := this.gui.AddText("x30 y+5 w440 h20", 
+                this.FormatDependencyName(name) . ": " . info.status)
+        }
+        
+        ; All installed message
+        this.controls["all_installed"] := this.gui.AddText("x20 y+15 w460 h25 Center Hidden", 
+            "✅ All components are already installed!")
+        this.controls["all_installed"].SetFont("s10 Bold cGreen")
+    }
+    
+    CreateLicensePage() {
+        this.controls["license_header"] := this.gui.AddText("x20 y20 w460 h25 Hidden Center", "License Agreement")
+        this.controls["license_header"].SetFont("s12 Bold")
+        
+        this.controls["license_text"] := this.gui.AddEdit("x20 y55 w460 h250 Hidden ReadOnly VScroll", 
+            this.GetLicenseText())
+        this.controls["license_text"].SetFont("s8", "Consolas")
+        
+        this.controls["license_accept"] := this.gui.AddCheckBox("x20 y315 w460 h20 Hidden", 
+            "I accept the terms in the license agreement")
+        this.controls["license_accept"].OnEvent("Click", ObjBindMethod(this, "OnLicenseAcceptChange"))
+    }
+    
+    CreateProgressPage() {
+        this.controls["progress_header"] := this.gui.AddText("x20 y20 w460 h25 Hidden Center", 
+            "Installing Components")
+        this.controls["progress_header"].SetFont("s12 Bold")
+        
+        this.controls["progress_desc"] := this.gui.AddText("x20 y55 w460 h20 Hidden Center", 
+            "Please wait while the required components are downloaded and installed...")
+        
+        ; Main status text (larger, more prominent)
+        this.controls["progress_status"] := this.gui.AddText("x20 y85 w460 h25 Hidden Center", "Preparing installation...")
+        this.controls["progress_status"].SetFont("s10 Bold", "Segoe UI")
+        
+        ; Progress bar with better styling and green color
+        this.controls["progress_bar"] := this.gui.AddProgress("x20 y115 w460 h25 Hidden Smooth Border cGreen", 5)
+        this.controls["progress_bar"].Opt("Background0xF5F5F5")
+        
+        ; Detailed status (smaller, below progress bar)
+        this.controls["progress_detail"] := this.gui.AddText("x20 y150 w460 h20 Hidden Center", "Ready to begin installation...")
+        this.controls["progress_detail"].SetFont("s8", "Segoe UI")
+        
+        ; Activity log (scrollable)
+        this.controls["progress_log"] := this.gui.AddEdit("x20 y180 w460 h130 Hidden ReadOnly VScroll", "")
+        this.controls["progress_log"].SetFont("s8", "Consolas")
+        this.controls["progress_log"].Opt("Background0xF5F5F5")
+    }
+    
+    CreateCompletePage() {
+        this.controls["complete_header"] := this.gui.AddText("x20 y20 w460 h25 Hidden Center", 
+            "Installation Complete")
+        this.controls["complete_header"].SetFont("s12 Bold cGreen")
+        
+        this.controls["complete_desc"] := this.gui.AddText("x20 y55 w460 h60 Hidden Center", 
+            "Piper TTS has been successfully installed on your system." .
+            "`n`nYou can now use Piper TTS for text-to-speech conversion.")
+        
+        this.controls["complete_details"] := this.gui.AddText("x20 y+20 w460 h80 Hidden", 
+            "Installed Components:`n" .
+            "• Piper TTS Engine`n" .
+            "• FFmpeg Audio Processing`n" .
+            "• English (GB) Alba Voice Model")
+    }
+    
+    CreateNavigationButtons() {
+        ; Bottom button panel with more space
+        this.controls["button_line"] := this.gui.AddText("x0 y340 w500 h1 0x10")  ; Horizontal line
+        
+        this.controls["btn_back"] := this.gui.AddButton("x240 y355 w70 h25 Disabled", "&Back")
+        this.controls["btn_back"].OnEvent("Click", ObjBindMethod(this, "GoBack"))
+        
+        this.controls["btn_next"] := this.gui.AddButton("x320 y355 w70 h25", "&Next >")
+        this.controls["btn_next"].OnEvent("Click", ObjBindMethod(this, "GoNext"))
+        
+        this.controls["btn_cancel"] := this.gui.AddButton("x400 y355 w70 h25", "Cancel")
+        this.controls["btn_cancel"].OnEvent("Click", ObjBindMethod(this, "OnClose"))
+    }
+    
+    ; Page Management Methods
+    ShowWelcomePage() {
+        this.HideAllPages()
+        this.controls["welcome_header"].Visible := true
+        this.controls["welcome_desc"].Visible := true
+        this.controls["dep_header"].Visible := true
+        
+        for name, info in this.dependencies {
+            this.controls["status_" . name].Visible := true
+        }
+        
+        if (this.AllDependenciesInstalled()) {
+            this.controls["all_installed"].Visible := true
+            this.controls["btn_next"].Text := "&Finish"
+        } else {
+            this.controls["all_installed"].Visible := false
+            this.controls["btn_next"].Text := "&Next >"
+        }
+        
+        this.controls["btn_back"].Enabled := false
+        this.controls["btn_next"].Enabled := true
+        this.currentPage := "welcome"
+        this.UpdateDependencyDisplay()
+    }
+    
+    ShowLicensePage() {
+        this.HideAllPages()
+        
+        componentsToInstall := this.GetComponentsToInstall()
+        
+        ; Update header to show what's being licensed
+        headerText := "License Agreement"
+        if (componentsToInstall.Length > 0) {
+            headerText .= " (" . componentsToInstall.Length . " component" . (componentsToInstall.Length > 1 ? "s" : "") . ")"
+        }
+        
+        this.controls["license_header"].Text := headerText
+        this.controls["license_header"].Visible := true
+        this.controls["license_text"].Text := this.GetLicenseText()
+        this.controls["license_text"].Visible := true
+        this.controls["license_accept"].Text := "I accept the license terms for the components being installed"
+        this.controls["license_accept"].Visible := true
+        
+        this.controls["btn_back"].Enabled := true
+        this.controls["btn_next"].Enabled := this.controls["license_accept"].Value
+        
+        ; Update button text based on whether installation is needed
+        if (this.AllDependenciesInstalled()) {
+            this.controls["btn_next"].Text := "&Accept"
+        } else {
+            this.controls["btn_next"].Text := "&Install"
+        }
+        
+        this.currentPage := "license"
+    }
+    
+    ShowProgressPage() {
+        this.HideAllPages()
+        this.controls["progress_header"].Visible := true
+        this.controls["progress_desc"].Visible := true
+        this.controls["progress_status"].Visible := true
+        this.controls["progress_bar"].Visible := true
+        this.controls["progress_detail"].Visible := true
+        this.controls["progress_log"].Visible := true
+        
+        this.controls["btn_back"].Enabled := false
+        this.controls["btn_next"].Enabled := false
+        this.controls["btn_next"].Text := "Installing..."
+        this.controls["btn_cancel"].Enabled := false
+        this.currentPage := "progress"
+        
+        ; Set initial progress state
+        this.controls["progress_bar"].Value := 5
+        this.controls["progress_detail"].Text := "Initializing installation process..."
+        
+        ; Start installation process
+        SetTimer(ObjBindMethod(this, "StartInstallation"), -100)
+    }
+    
+    ShowCompletePage() {
+        this.HideAllPages()
+        this.controls["complete_header"].Visible := true
+        this.controls["complete_desc"].Visible := true
+        this.controls["complete_details"].Visible := true
+        
+        this.controls["btn_back"].Enabled := false
+        this.controls["btn_next"].Enabled := true
+        this.controls["btn_next"].Text := "&Finish"
+        this.controls["btn_cancel"].Enabled := true
+        this.currentPage := "complete"
+    }
+    
+    HideAllPages() {
+        for name, ctrl in this.controls {
+            if (InStr(name, "btn_") != 1 && name != "button_line") {
+                ctrl.Visible := false
+            }
+        }
+    }
+    
+    ; Navigation Event Handlers
+    GoNext(*) {
+        switch this.currentPage {
+            case "welcome":
+                if (this.AllDependenciesInstalled()) {
+                    this.OnClose()
+                } else {
+                    this.ShowLicensePage()
+                }
+            case "license":
+                this.ShowProgressPage()
+            case "progress":
+                ; Should not be clickable during progress
+            case "complete":
+                this.OnClose()
+        }
+    }
+    
+    GoBack(*) {
+        switch this.currentPage {
+            case "license":
+                this.ShowWelcomePage()
+            case "progress":
+                ; Should not be able to go back during installation
+        }
+    }
+    
+    OnLicenseAcceptChange(*) {
+        this.controls["btn_next"].Enabled := this.controls["license_accept"].Value
+    }
+    
+    ; Dependency Checking
+    CheckDependencies() {
+        for name, info in this.dependencies {
+            switch name {
+                case "piper":
+                    info.exists := this.CheckExecutable(info.path, "piper --version", "Piper")
+                case "ffmpeg":
+                    info.exists := this.CheckExecutable(info.path, "ffmpeg -version", "FFmpeg")
+                case "ffplay":
+                    info.exists := this.CheckExecutable(info.path, "ffplay -version", "FFplay")
+                case "voices":
+                    info.exists := this.CheckVoicesDirectory(info.path)
+            }
+            info.status := info.exists ? "✅ Installed" : "❌ Not Found"
+        }
+    }
+    
+    CheckExecutable(localPath, systemCommand, name) {
+        ; Check local path first
+        if (FileExist(localPath)) {
+            try {
+                RunWait('"' . localPath . '" --version', , "Hide")
+                return true
+            } catch {
+                ; Continue to system check
+            }
+        }
+        
+        ; Check system PATH
+        try {
+            RunWait(systemCommand, , "Hide")
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    CheckVoicesDirectory(path) {
+        if (!DirExist(path)) {
+            return false
+        }
+        
+        ; Check for .onnx and .onnx.json files
+        onnxExists := false
+        jsonExists := false
+        
+        Loop Files, path . "\*.onnx" {
+            onnxExists := true
+            break
+        }
+        
+        Loop Files, path . "\*.onnx.json" {
+            jsonExists := true
+            break
+        }
+        
+        return onnxExists && jsonExists
+    }
+    
+    AllDependenciesInstalled() {
+        for name, info in this.dependencies {
+            if (!info.exists) {
+                return false
+            }
+        }
+        return true
+    }
+    
+    UpdateDependencyDisplay() {
+        for name, info in this.dependencies {
+            if (this.controls.Has("status_" . name)) {
+                this.controls["status_" . name].Text := this.FormatDependencyName(name) . ": " . info.status
+            }
+        }
+    }
+    
+    FormatDependencyName(name) {
+        switch name {
+            case "piper": return "Piper TTS"
+            case "ffmpeg": return "FFmpeg"
+            case "ffplay": return "FFplay"
+            case "voices": return "Voice Models"
+            default: return name
+        }
+    }
+    
+    ; Installation Process
+    StartInstallation() {
+        this.installStep := 0
+        this.totalSteps := 0
+        
+        ; Count steps needed
+        for name, info in this.dependencies {
+            if (!info.exists) {
+                switch name {
+                    case "piper": this.totalSteps += 3  ; download, extract, move
+                    case "ffmpeg", "ffplay": this.totalSteps += 3  ; download, extract, move (counted once)
+                    case "voices": this.totalSteps += 2  ; download both files
+                }
+            }
+        }
+        
+        ; Adjust for ffmpeg/ffplay being handled together
+        if (!this.dependencies["ffmpeg"].exists || !this.dependencies["ffplay"].exists) {
+            this.totalSteps -= 3  ; Remove double count
+        }
+        
+        this.totalSteps += 1  ; Cleanup step
+        
+        this.LogProgress("Starting installation process...")
+        this.InstallNextComponent()
+    }
+    
+    InstallNextComponent() {
+        ; Install Piper
+        if (!this.dependencies["piper"].exists && !this.Get("piperInstalled", false)) {
+            this.InstallPiper()
+            return
+        }
+        
+        ; Install FFmpeg (handles both ffmpeg and ffplay)
+        if ((!this.dependencies["ffmpeg"].exists || !this.dependencies["ffplay"].exists) && !this.Get("ffmpegInstalled", false)) {
+            this.InstallFFmpeg()
+            return
+        }
+        
+        ; Install voices
+        if (!this.dependencies["voices"].exists && !this.Get("voicesInstalled", false)) {
+            this.InstallVoices()
+            return
+        }
+        
+        ; Cleanup and finish
+        this.CleanupAndFinish()
+        this.ShowCompletePage()
+    }
+    
+    InstallPiper() {
+        this.controls["progress_status"].Text := "Installing Piper TTS..."
+        this.UpdateProgress(this.installStep++, "Preparing Piper TTS download...")
+        
+        downloadDir := A_ScriptDir . "\downloads"
+        DirCreate(downloadDir)
+        piperZip := downloadDir . "\piper_windows_amd64.zip"
+        
+        try {
+            ; Download step
+            this.DownloadFile(PiperDependenciesInstaller.PIPER_URL, piperZip, "Piper TTS")
+            
+            ; Extract step
+            this.controls["progress_status"].Text := "Extracting Piper TTS..."
+            this.UpdateProgress(this.installStep++, "Extracting Piper TTS archive...")
+            
+            ; Extract using tar (native Windows command)
+            RunWait('tar -xf "' . piperZip . '" -C "' . downloadDir . '"', , "Hide")
+            this.LogProgress("Piper TTS archive extracted successfully.")
+            
+            ; Install step
+            this.controls["progress_status"].Text := "Installing Piper TTS..."
+            this.UpdateProgress(this.installStep++, "Moving Piper TTS to final location...")
+            
+            ; Move to final location
+            extractedDir := downloadDir . "\piper"
+            targetDir := A_ScriptDir . "\piper"
+            
+            if (DirExist(targetDir)) {
+                DirDelete(targetDir, true)
+                this.LogProgress("Removed existing Piper installation.")
+            }
+            DirMove(extractedDir, targetDir, 2)
+            
+            this.Set("piperInstalled", true)
+            this.LogProgress("✅ Piper TTS installed successfully to: " . targetDir)
+            
+        } catch as e {
+            this.LogProgress("❌ Error installing Piper: " . e.Message)
+            this.ShowError("Failed to install Piper TTS", e.Message)
+            return
+        }
+        
+        this.InstallNextComponent()
+    }
+    
+    InstallFFmpeg() {
+        this.controls["progress_status"].Text := "Installing FFmpeg..."
+        this.UpdateProgress(this.installStep++, "Preparing FFmpeg download...")
+        
+        downloadDir := A_ScriptDir . "\downloads"
+        DirCreate(downloadDir)
+        ffmpegArchive := downloadDir . "\ffmpeg-release-essentials.7z"
+        
+        try {
+            ; Download step
+            this.DownloadFile(PiperDependenciesInstaller.FFMPEG_URL, ffmpegArchive, "FFmpeg")
+            
+            ; Extract step
+            this.controls["progress_status"].Text := "Extracting FFmpeg..."
+            this.UpdateProgress(this.installStep++, "Extracting FFmpeg archive...")
+            
+            ; Extract using tar (supports 7z format)
+            RunWait('tar -xf "' . ffmpegArchive . '" -C "' . downloadDir . '"', , "Hide")
+            this.LogProgress("FFmpeg archive extracted successfully.")
+            
+            ; Install step
+            this.controls["progress_status"].Text := "Installing FFmpeg..."
+            this.UpdateProgress(this.installStep++, "Moving FFmpeg to final location...")
+            
+            ; Find extracted directory (name may vary)
+            extractedDir := ""
+            Loop Files, downloadDir . "\ffmpeg-*", "D" {
+                extractedDir := A_LoopFileFullPath
+                this.LogProgress("Found extracted directory: " . A_LoopFileName)
+                break
+            }
+            
+            if (!extractedDir) {
+                throw Error("Could not find extracted FFmpeg directory")
+            }
+            
+            ; Move to final location
+            targetDir := A_ScriptDir . "\ffmpeg"
+            if (DirExist(targetDir)) {
+                DirDelete(targetDir, true)
+                this.LogProgress("Removed existing FFmpeg installation.")
+            }
+            DirMove(extractedDir, targetDir, 2)
+            
+            this.Set("ffmpegInstalled", true)
+            this.LogProgress("✅ FFmpeg installed successfully to: " . targetDir)
+            
+        } catch as e {
+            this.LogProgress("❌ Error installing FFmpeg: " . e.Message)
+            this.ShowError("Failed to install FFmpeg", e.Message)
+            return
+        }
+        
+        this.InstallNextComponent()
+    }
+    
+    InstallVoices() {
+        this.controls["progress_status"].Text := "Installing voice models..."
+        this.UpdateProgress(this.installStep++, "Preparing voice model downloads...")
+        
+        downloadDir := A_ScriptDir . "\downloads"
+        voicesDir := A_ScriptDir . "\voices"
+        DirCreate(downloadDir)
+        DirCreate(voicesDir)
+        
+        try {
+            ; Download both voice files
+            onnxFile := downloadDir . "\en_GB-alba-medium.onnx"
+            jsonFile := downloadDir . "\en_GB-alba-medium.onnx.json"
+            
+            this.controls["progress_status"].Text := "Downloading voice model..."
+            this.DownloadFile(PiperDependenciesInstaller.VOICE_ONNX_URL, onnxFile, "Voice Model (.onnx)")
+            
+            this.controls["progress_status"].Text := "Downloading voice configuration..."
+            this.DownloadFile(PiperDependenciesInstaller.VOICE_JSON_URL, jsonFile, "Voice Config (.json)")
+            
+            this.controls["progress_status"].Text := "Installing voice files..."
+            this.UpdateProgress(this.installStep++, "Moving voice files to final location...")
+            
+            ; Move files to voices directory
+            FileMove(onnxFile, voicesDir . "\en_GB-alba-medium.onnx", 1)
+            FileMove(jsonFile, voicesDir . "\en_GB-alba-medium.onnx.json", 1)
+            
+            this.Set("voicesInstalled", true)
+            this.LogProgress("✅ Voice models installed successfully to: " . voicesDir)
+            this.LogProgress("   • en_GB-alba-medium.onnx")
+            this.LogProgress("   • en_GB-alba-medium.onnx.json")
+            
+        } catch as e {
+            this.LogProgress("❌ Error installing voices: " . e.Message)
+            this.ShowError("Failed to install voice models", e.Message)
+            return
+        }
+        
+        this.InstallNextComponent()
+    }
+    
+    CleanupAndFinish() {
+        this.UpdateProgress(this.installStep++, "Cleaning up temporary files...")
+        this.controls["progress_detail"].Text := "Removing temporary download files..."
+        
+        try {
+            downloadDir := A_ScriptDir . "\downloads"
+            if (DirExist(downloadDir)) {
+                DirDelete(downloadDir, true)
+                this.LogProgress("Temporary files cleaned up successfully.")
+            }
+        } catch as e {
+            this.LogProgress("Warning: Could not clean up download directory: " . e.Message)
+        }
+        
+        ; Create the main program's LICENSE.txt file
+        this.CreateMainLicenseFile()
+        
+        ; Final progress update - ensure we hit exactly 100%
+        this.controls["progress_bar"].Value := 100
+        this.controls["progress_status"].Text := "Installation completed successfully!"
+        this.controls["progress_detail"].Text := "100% complete - All components installed"
+        this.LogProgress("🎉 Installation completed successfully!")
+        this.LogProgress("All required components have been installed and are ready to use.")
+        
+        ; Re-check dependencies
+        this.CheckDependencies()
+    }
+    
+    ; Utility Methods
+    DownloadFile(url, destination, description) {
+        this.controls["progress_status"].Text := "Downloading " . description . "..."
+        this.LogProgress("Starting download: " . description)
+        
+        ; Show file size info if possible
+        if (InStr(description, "Piper")) {
+            this.controls["progress_detail"].Text := "Downloading " . description . " (~15MB)..."
+        } else if (InStr(description, "FFmpeg")) {
+            this.controls["progress_detail"].Text := "Downloading " . description . " (~50MB)..."
+        } else {
+            this.controls["progress_detail"].Text := "Downloading " . description . "..."
+        }
+        
+        try {
+            Download(url, destination)
+            this.LogProgress("Download completed: " . description)
+        } catch as e {
+            this.LogProgress("Download failed: " . description . " - " . e.Message)
+            throw Error("Failed to download " . description . ": " . e.Message)
+        }
+    }
+    
+    UpdateProgress(step, message) {
+        ; Calculate progress with 5% starting point, scaling 5-100%
+        progress := 5 + Round(((step / this.totalSteps) * 95))
+        this.controls["progress_bar"].Value := progress
+        this.controls["progress_status"].Text := message
+        this.controls["progress_detail"].Text := progress . "% complete (" . step . "/" . this.totalSteps . " steps)"
+        
+        ; Add to log as well
+        this.LogProgress(message)
+    }
+    
+    LogProgress(message) {
+        timestamp := FormatTime(A_Now, "HH:mm:ss")
+        logEntry := "[" . timestamp . "] " . message . "`r`n"
+        this.controls["progress_log"].Text := this.controls["progress_log"].Text . logEntry
+        
+        ; Auto-scroll to bottom
+        PostMessage(0x0115, 7, 0, this.controls["progress_log"].Hwnd) ; WM_VSCROLL, SB_BOTTOM
+    }
+    
+    ShowError(title, message) {
+        MsgBox(message, title, "16")  ; Error icon
+        this.controls["btn_cancel"].Enabled := true
+        this.controls["btn_next"].Text := "Retry"
+        this.controls["btn_next"].Enabled := true
+    }
+    
+    ; Simple property storage for installation state
+    static properties := Map()
+    
+    Set(key, value) {
+        PiperDependenciesInstaller.properties[key] := value
+    }
+    
+    Get(key, default := "") {
+        return PiperDependenciesInstaller.properties.Get(key, default)
+    }
+    
+    ; Event Handlers
+    OnResize(gui, minMax, width, height) {
+        if (minMax = -1)  ; Minimized
+            return
+        
+        ; Adjust button positions
+        buttonY := height - 45
+        this.controls["button_line"].Move(0, height - 50, width)
+        this.controls["btn_back"].Move(width - 260, buttonY)
+        this.controls["btn_next"].Move(width - 180, buttonY)
+        this.controls["btn_cancel"].Move(width - 100, buttonY)
+        
+        ; Adjust content width
+        contentWidth := width - 40
+        for name, ctrl in this.controls {
+            if (InStr(name, "btn_") != 1 && name != "button_line") {
+                ctrl.Move(, , contentWidth)
+            }
+        }
+    }
+    
+    OnClose(*) {
+        if (this.currentPage = "progress") {
+            result := MsgBox("Installation is in progress. Are you sure you want to cancel?", 
+                            "Cancel Installation", "YesNo Icon?")
+            if (result = "No") {
+                return
+            }
+        }
+        ExitApp()
+    }
+    
+    Show() {
+        this.gui.Show("w" . PiperDependenciesInstaller.WINDOW_WIDTH . " h" . PiperDependenciesInstaller.WINDOW_HEIGHT)
+    }
+    
+    ; Get components that need to be installed
+    GetComponentsToInstall() {
+        componentsToInstall := []
+        
+        ; Always include the main program license
+        componentsToInstall.Push("piperAnywhere")
+        
+        ; Map dependencies to license components
+        if (!this.dependencies["piper"].exists) {
+            componentsToInstall.Push("piper")
+            componentsToInstall.Push("espeak")  ; Piper always requires espeak
+        }
+        
+        if (!this.dependencies["ffmpeg"].exists || !this.dependencies["ffplay"].exists) {
+            componentsToInstall.Push("ffmpeg")
+        }
+        
+        if (!this.dependencies["voices"].exists) {
+            componentsToInstall.Push("voices")
+        }
+        
+        return componentsToInstall
+    }
+    
+    ; Generate dynamic license text based on what's being installed
+    GetLicenseText() {
+        componentsToInstall := this.GetComponentsToInstall()
+        
+        ; Always show at least the main program license
+        if (componentsToInstall.Length <= 1) {  ; Only piperAnywhere in the list
+            licenseText := "SOFTWARE LICENSE AGREEMENT`n`n" .
+                          "This installer uses piperAnywhere, which is licensed under GPL v3:`n`n"
+        } else {
+            licenseText := "SOFTWARE LICENSE AGREEMENT`n`n" .
+                          "This installer includes piperAnywhere and will download the following additional components:`n`n"
+        }
+        
+        ; Add component list
+        for component in componentsToInstall {
+            if (PiperDependenciesInstaller.LICENSE_DATA.Has(component)) {
+                licenseInfo := PiperDependenciesInstaller.LICENSE_DATA[component]
+                licenseText .= "• " . licenseInfo.name . " (" . licenseInfo.license . ")`n"
+            }
+        }
+        
+        licenseText .= "`nLicensing terms for each component:`n`n"
+        
+        ; Add individual license sections
+        for component in componentsToInstall {
+            if (PiperDependenciesInstaller.LICENSE_DATA.Has(component)) {
+                licenseInfo := PiperDependenciesInstaller.LICENSE_DATA[component]
+                
+                licenseText .= "═══════════════════════════════════════════════════════════════════════`n"
+                licenseText .= licenseInfo.category . ": " . licenseInfo.name . "`n"
+                licenseText .= "═══════════════════════════════════════════════════════════════════════`n"
+                licenseText .= licenseInfo.text . "`n`n"
+            }
+        }
+        
+        ; Add combined licensing notice if GPL components are included
+        hasGPL := false
+        for component in componentsToInstall {
+            if (component = "piper" || component = "espeak") {
+                hasGPL := true
+                break
+            }
+        }
+        
+        if (hasGPL) {
+            licenseText .= "═══════════════════════════════════════════════════════════════════════`n"
+            licenseText .= "IMPORTANT LICENSING NOTICE`n"
+            licenseText .= "═══════════════════════════════════════════════════════════════════════`n"
+            licenseText .= "This installation includes GPL v3 licensed components (eSpeak NG), which " .
+                          "may affect the licensing of the combined system:`n`n" .
+                          "• If you redistribute this software bundle, you may need to provide source code`n" .
+                          "• Commercial distribution may require compliance with GPL v3 terms`n" .
+                          "• The GPL is a `"copyleft`" license that can extend to derivative works`n`n" .
+                          "For commercial use or redistribution, consult with legal counsel to ensure compliance.`n`n"
+        }
+        
+        licenseText .= "BY PROCEEDING WITH INSTALLATION, YOU ACKNOWLEDGE THAT YOU HAVE READ AND " .
+                      "UNDERSTOOD THE LICENSING TERMS OF THE COMPONENTS BEING INSTALLED AND AGREE " .
+                      "TO COMPLY WITH THE APPLICABLE LICENSE REQUIREMENTS."
+        
+        return licenseText
+    }
+    
+    ; Add method to get attribution text for all components (including main program)
+    GetAttributionText() {
+        componentsToInstall := this.GetComponentsToInstall()
+        attributionText := "piperAnywhere - Text-to-Speech Annotation Tool`n" .
+                          "Copyright (C) 2025 [realname]`n`n" .
+                          "This software is licensed under GPL v3 and includes these components:`n`n"
+        
+        for component in componentsToInstall {
+            if (PiperDependenciesInstaller.LICENSE_DATA.Has(component)) {
+                licenseInfo := PiperDependenciesInstaller.LICENSE_DATA[component]
+                attributionText .= "• " . licenseInfo.name . " (" . licenseInfo.license . ")`n"
+            }
+        }
+        
+        ; Add specific attribution requirements
+        for component in componentsToInstall {
+            switch component {
+                case "ffmpeg":
+                    attributionText .= "`nFFmpeg Attribution: This software uses libraries from the FFmpeg project under the LGPLv2.1`n"
+                case "voices":
+                    attributionText .= "`nVoice Model Attribution: Alba Voice Model by University of Edinburgh, licensed under CC BY 4.0`n"
+            }
+        }
+        
+        attributionText .= "`nFor complete license terms, see the LICENSE files in the installation directory."
+        
+        return attributionText
+    }
+    
+    ; Create LICENSE file for main program
+    CreateMainLicenseFile() {
+        try {
+            licenseContent := PiperDependenciesInstaller.LICENSE_DATA["piperAnywhere"].text
+            ; Replace placeholder with actual copyright notice
+            licenseContent := StrReplace(licenseContent, "[realname]", "[realname]")  ; User will replace this
+            
+            FileAppend(licenseContent, A_ScriptDir . "\LICENSE.txt", "UTF-8")
+            this.LogProgress("Created main program LICENSE.txt file")
+        } catch as e {
+            this.LogProgress("Warning: Could not create LICENSE.txt file: " . e.Message)
+        }
+    }
+}
+
+; Create and show the installer
+try {
+    installer := PiperDependenciesInstaller()
+    installer.Show()
+} catch as e {
+    MsgBox("Failed to start installer: " . e.Message, "Error", "16")
+    ExitApp()
+}
