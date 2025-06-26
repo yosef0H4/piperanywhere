@@ -84,7 +84,7 @@ piperAnywhere integrates several high-quality open-source components:
 ## 🏗️ Building from Source
 
 ### Prerequisites
-- AutoHotkey v2
+- AutoHotkey v2 (v2.1-alpha.18 recommended, not tested on other versions)
 - All dependencies (automatically managed by DependencyChecker)
 
 ### Development Structure

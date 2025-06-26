@@ -4,3 +4,4 @@ ffmpeg/
 voices/
 *.ini
 Lib/
+*.exe
