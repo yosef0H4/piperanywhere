@@ -284,8 +284,9 @@ class UIManager {
     OnShowAbout(*) {
         aboutText := "🎙️ piperAnywhere v1.0`n" .
                     "Text-to-Speech Annotation Tool`n`n" .
-                    "Copyright (C) 2025 [Your Name]`n" .
+                    "Copyright (C) 2025 yousef abdullah`n" .
                     "Licensed under GPL v3.0`n`n" .
+                    "Source: https://github.com/yosef0H4/piperanywhere`n`n" .
                     "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" .
                     "THIRD-PARTY COMPONENTS:`n`n" .
                     "• This software uses libraries from the FFmpeg project under the LGPLv2.1`n" .

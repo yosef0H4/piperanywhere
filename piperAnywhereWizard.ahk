@@ -37,7 +37,7 @@ class PiperDependenciesInstaller {
                   "along with this program. If not, see <https://www.gnu.org/licenses/>.`n`n" .
                   "✅ LICENSE COMPATIBILITY: This GPL v3 license is fully compatible with " .
                   "all dependencies (Piper TTS, eSpeak NG, FFmpeg) ensuring no licensing conflicts.`n`n" .
-                  "Source code: Available upon request or at distribution location`n" .
+                  "Source code: https://github.com/yosef0H4/piperanywhere`n" .
                   "Contact: yosef00h4@gmail.com",
             category: "Main Application"
         },
@@ -1031,9 +1031,7 @@ class PiperDependenciesInstaller {
     CreateMainLicenseFile() {
         try {
             licenseContent := PiperDependenciesInstaller.LICENSE_DATA["piperAnywhere"].text
-            ; Replace placeholder with actual copyright notice
-            licenseContent := StrReplace(licenseContent, "yousef abdullah", "yousef abdullah")  ; User will replace this
-            
+            ; Replace placeholder with actual copyright notice            
             FileAppend(licenseContent, this.installPath . "\LICENSE", "UTF-8")
             this.LogProgress("Created main program LICENSE file")
         } catch as e {
