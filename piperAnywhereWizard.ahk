@@ -1031,7 +1031,6 @@ class PiperDependenciesInstaller {
     CreateMainLicenseFile() {
         try {
             licenseContent := PiperDependenciesInstaller.LICENSE_DATA["piperAnywhere"].text
-            ; Replace placeholder with actual copyright notice            
             FileAppend(licenseContent, this.installPath . "\LICENSE", "UTF-8")
             this.LogProgress("Created main program LICENSE file")
         } catch as e {
