@@ -122,7 +122,7 @@ class PiperDependenciesInstaller {
                   "• Attribution — You must give appropriate credit, provide a link to the " .
                   "license, and indicate if changes were made. You may do so in any reasonable " .
                   "manner, but not in any way that suggests the licensor endorses you or your use.`n`n" .
-                  "ATTRIBUTION EXAMPLE:`n" .
+                  "ATTRIBUTION:`n" .
                   "`"Alba Voice Model`" by University of Edinburgh, licensed under CC BY 4.0`n`n" .
                   "Full license: https://creativecommons.org/licenses/by/4.0/`n" .
                   "Source: https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/alba/medium",
