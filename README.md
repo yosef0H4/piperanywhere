@@ -91,7 +91,8 @@ piperAnywhere integrates several high-quality open-source components:
 ```
 piperAnywhere/                     # Development directory
 ├── piperAnywhere.ahk              # Main application entry point
-├── piperAnywhereWizard.exe        # Installer executable
+├── piperAnywhere.exe              # needed if you want to build wizard
+├── piperAnywhereWizard.ahk        # needed if you want to edit the wizard
 ├── LICENSE                        # GPL v3.0 license
 ├── src/                           # Source code modules
 │   ├── AudioSettings.ahk          # Audio processing configuration
