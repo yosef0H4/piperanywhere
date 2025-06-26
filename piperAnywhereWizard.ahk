@@ -125,7 +125,7 @@ class PiperDependenciesInstaller {
                   "ATTRIBUTION EXAMPLE:`n" .
                   "`"Alba Voice Model`" by University of Edinburgh, licensed under CC BY 4.0`n`n" .
                   "Full license: https://creativecommons.org/licenses/by/4.0/`n" .
-                  "Source: https://datashare.ed.ac.uk/handle/10283/3270",
+                  "Source: https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/alba/medium",
             category: "Voice Models"
         }
     )

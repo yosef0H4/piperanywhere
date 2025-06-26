@@ -51,6 +51,7 @@ class UIManager {
         this.fileMenu.Add("💾 &Save Audio", ObjBindMethod(this, "OnSaveAudio"))
         this.fileMenu.Add("ℹ️ &Dependencies", ObjBindMethod(this, "OnShowDependencyInfo"))
         this.fileMenu.Add("❓ &Help", ObjBindMethod(this, "OnShowHelp"))
+        this.fileMenu.Add("ℹ️ &About", ObjBindMethod(this, "OnShowAbout"))
         this.fileMenu.Add("✖️ &Exit", ObjBindMethod(this, "OnExit"))
     }
     
@@ -278,6 +279,26 @@ class UIManager {
         helpText .= "ℹ️ Click 'Dependencies' to check installation status."
         
         MsgBox(helpText, "Help - Piper TTS", "Iconi")
+    }
+    
+    OnShowAbout(*) {
+        aboutText := "🎙️ piperAnywhere v1.0`n" .
+                    "Text-to-Speech Annotation Tool`n`n" .
+                    "Copyright (C) 2025 [Your Name]`n" .
+                    "Licensed under GPL v3.0`n`n" .
+                    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" .
+                    "THIRD-PARTY COMPONENTS:`n`n" .
+                    "• This software uses libraries from the FFmpeg project under the LGPLv2.1`n" .
+                    "  Source: https://github.com/FFmpeg/FFmpeg`n" .
+                    "  License: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html`n`n" .
+                    "• Piper TTS Engine (MIT License)`n" .
+                    "  Source: https://github.com/rhasspy/piper`n`n" .
+                    "• OCR Library by Descolada (MIT License)`n" .
+                    "  Source: https://github.com/Descolada/OCR/`n`n" .
+                    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" .
+                    "For complete license terms, see LICENSE file in same directory."
+        
+        MsgBox(aboutText, "About piperAnywhere", "Iconi")
     }
     
     OnExit(*) {
