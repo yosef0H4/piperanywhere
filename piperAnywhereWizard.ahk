@@ -24,7 +24,7 @@ class PiperDependenciesInstaller {
             license: "GNU General Public License v3.0",
             text: "GNU GENERAL PUBLIC LICENSE Version 3`n`n" .
                   "piperAnywhere - An annotation program designed to make users use Piper TTS to read text anywhere`n`n" .
-                  "Copyright (C) 2025 [realname]`n`n" .
+                  "Copyright (C) 2025 yousef abdullah`n`n" .
                   "This program is free software: you can redistribute it and/or modify " .
                   "it under the terms of the GNU General Public License as published by " .
                   "the Free Software Foundation, either version 3 of the License, or " .
@@ -38,7 +38,7 @@ class PiperDependenciesInstaller {
                   "✅ LICENSE COMPATIBILITY: This GPL v3 license is fully compatible with " .
                   "all dependencies (Piper TTS, eSpeak NG, FFmpeg) ensuring no licensing conflicts.`n`n" .
                   "Source code: Available upon request or at distribution location`n" .
-                  "Contact: [your contact information]",
+                  "Contact: yosef00h4@gmail.com",
             category: "Main Application"
         },
         
@@ -182,13 +182,13 @@ class PiperDependenciesInstaller {
         this.controls["path_label"].SetFont("s10 Bold")
         
         ; Path input with browse button
-        this.controls["path_edit"] := this.gui.AddEdit("x20 y+5 w380 h25", this.installPath)
-        this.controls["path_browse"] := this.gui.AddButton("x+10 yp w70 h25", "Browse...")
+        this.controls["path_edit"] := this.gui.AddEdit("x20 y+5 w350 h25", this.installPath)
+        this.controls["path_browse"] := this.gui.AddButton("x+10 yp w80 h25", "Browse...")
         this.controls["path_browse"].OnEvent("Click", ObjBindMethod(this, "BrowsePath"))
         
         ; Info text
         this.controls["path_info"] := this.gui.AddText("x20 y+10 w460 h60", 
-            "• The installation path will automatically end with '\\piper'" . 
+            "• The installation path will automatically end with '\piperAnywhere'" . 
             "`n• All components (Piper TTS, FFmpeg, voice models) will be installed in this location" .
             "`n• Make sure you have write permissions to the selected folder")
         this.controls["path_info"].SetFont("s8")
@@ -433,6 +433,7 @@ class PiperDependenciesInstaller {
                 this.ShowWelcomePage()
             case "welcome":
                 if (this.AllDependenciesInstalled()) {
+                    this.CleanUpDownloadsFolder()
                     this.OnClose()
                 } else {
                     this.ShowLicensePage()
@@ -571,10 +572,20 @@ class PiperDependenciesInstaller {
         this.totalSteps += 1  ; Cleanup step
         
         this.LogProgress("Starting installation process...")
-        this.InstallNextComponent()
+        try {
+            this.InstallNextComponent()
+        } finally {
+            this.CleanUpDownloadsFolder()
+        }
     }
     
     InstallNextComponent() {
+        ; Install the main application
+        if (!this.Get("mainAppInstalled", false)) {
+            this.InstallMainApplication()
+            return
+        }
+        
         ; Install Piper
         if (!this.dependencies["piper"].exists && !this.Get("piperInstalled", false)) {
             this.InstallPiper()
@@ -596,6 +607,25 @@ class PiperDependenciesInstaller {
         ; Cleanup and finish
         this.CleanupAndFinish()
         this.ShowCompletePage()
+    }
+    
+    InstallMainApplication() {
+        this.controls["progress_status"].Text := "Installing Main Application..."
+        this.UpdateProgress(this.installStep++, "Installing piperAnywhere.exe...")
+
+        try {
+            ; This will bundle piperAnywhere.exe into the compiled installer
+            ; and extract it to the installation path.
+            DirCreate(this.installPath)
+            FileInstall "piperAnywhere.exe", this.installPath . "\piperAnywhere.exe", 1
+            this.Set("mainAppInstalled", true)
+            this.LogProgress("✅ Main application (piperAnywhere.exe) installed successfully.")
+        } catch as e {
+            this.LogProgress("❌ Error installing main application: " . e.Message)
+            this.ShowError("Failed to install piperAnywhere.exe", e.Message)
+            return
+        }
+        this.InstallNextComponent()
     }
     
     InstallPiper() {
@@ -648,7 +678,7 @@ class PiperDependenciesInstaller {
         this.controls["progress_status"].Text := "Installing FFmpeg..."
         this.UpdateProgress(this.installStep++, "Preparing FFmpeg download...")
         
-        downloadDir := A_ScriptDir . "\downloads"
+        downloadDir := this.installPath . "\downloads"
         DirCreate(downloadDir)
         ffmpegArchive := downloadDir . "\ffmpeg-release-essentials.7z"
         
@@ -707,7 +737,7 @@ class PiperDependenciesInstaller {
         this.controls["progress_status"].Text := "Installing voice models..."
         this.UpdateProgress(this.installStep++, "Preparing voice model downloads...")
         
-        downloadDir := A_ScriptDir . "\downloads"
+        downloadDir := this.installPath . "\downloads"
         voicesDir := this.installPath . "\voices"
         DirCreate(downloadDir)
         DirCreate(voicesDir)
@@ -748,17 +778,7 @@ class PiperDependenciesInstaller {
         this.UpdateProgress(this.installStep++, "Cleaning up temporary files...")
         this.controls["progress_detail"].Text := "Removing temporary download files..."
         
-        try {
-            downloadDir := A_ScriptDir . "\downloads"
-            if (DirExist(downloadDir)) {
-                DirDelete(downloadDir, true)
-                this.LogProgress("Temporary files cleaned up successfully.")
-            }
-        } catch as e {
-            this.LogProgress("Warning: Could not clean up download directory: " . e.Message)
-        }
-        
-        ; Create the main program's LICENSE.txt file
+        ; Create the main program's LICENSE file
         this.CreateMainLicenseFile()
         
         ; Final progress update - ensure we hit exactly 100%
@@ -770,6 +790,18 @@ class PiperDependenciesInstaller {
         
         ; Re-check dependencies
         this.CheckDependencies()
+    }
+    
+    CleanUpDownloadsFolder() {
+        try {
+            downloadDir := this.installPath . "\downloads"
+            if (DirExist(downloadDir)) {
+                DirDelete(downloadDir, true)
+                this.LogProgress("Temporary files cleaned up successfully.")
+            }
+        } catch as e {
+            this.LogProgress("Warning: Could not clean up download directory: " . e.Message)
+        }
     }
     
     ; Utility Methods
@@ -808,7 +840,7 @@ class PiperDependenciesInstaller {
     
     LogProgress(message) {
         timestamp := FormatTime(A_Now, "HH:mm:ss")
-        logEntry := "[" . timestamp . "] " . message . "`r`n"
+        logEntry := "[" . timestamp . "] " . message . "`n"
         this.controls["progress_log"].Text := this.controls["progress_log"].Text . logEntry
         
         ; Auto-scroll to bottom
@@ -845,10 +877,19 @@ class PiperDependenciesInstaller {
         this.controls["btn_next"].Move(width - 180, buttonY)
         this.controls["btn_cancel"].Move(width - 100, buttonY)
         
-        ; Adjust content width
+        ; Adjust content width for most controls, but handle path controls specially
         contentWidth := width - 40
+        editWidth := contentWidth - 100  ; Leave space for browse button
+        
         for name, ctrl in this.controls {
-            if (InStr(name, "btn_") != 1 && name != "button_line") {
+            if (name = "path_edit") {
+                ; Special handling for path edit - leave space for browse button
+                ctrl.Move(, , editWidth)
+            } else if (name = "path_browse") {
+                ; Move browse button to the right of the edit box
+                ctrl.Move(30 + editWidth, , 80)
+            } else if (InStr(name, "btn_") != 1 && name != "button_line" && name != "path_edit" && name != "path_browse") {
+                ; All other controls get full width
                 ctrl.Move(, , contentWidth)
             }
         }
@@ -861,6 +902,7 @@ class PiperDependenciesInstaller {
             if (result = "No") {
                 return
             }
+            this.CleanUpDownloadsFolder() ; Clean up on user cancellation
         }
         ExitApp()
     }
@@ -942,7 +984,7 @@ class PiperDependenciesInstaller {
             licenseText .= "IMPORTANT LICENSING NOTICE`n"
             licenseText .= "═══════════════════════════════════════════════════════════════════════`n"
             licenseText .= "This installation includes GPL v3 licensed components (eSpeak NG), which " .
-                          "may affect the licensing of the combined system:`n`n" .
+                          "may affect the licensing of the combined system:`n`n " .
                           "• If you redistribute this software bundle, you may need to provide source code`n" .
                           "• Commercial distribution may require compliance with GPL v3 terms`n" .
                           "• The GPL is a `"copyleft`" license that can extend to derivative works`n`n" .
@@ -960,7 +1002,7 @@ class PiperDependenciesInstaller {
     GetAttributionText() {
         componentsToInstall := this.GetComponentsToInstall()
         attributionText := "piperAnywhere - Text-to-Speech Annotation Tool`n" .
-                          "Copyright (C) 2025 [realname]`n`n" .
+                          "Copyright (C) 2025 yousef abdullah`n`n" .
                           "This software is licensed under GPL v3 and includes these components:`n`n"
         
         for component in componentsToInstall {
@@ -990,12 +1032,12 @@ class PiperDependenciesInstaller {
         try {
             licenseContent := PiperDependenciesInstaller.LICENSE_DATA["piperAnywhere"].text
             ; Replace placeholder with actual copyright notice
-            licenseContent := StrReplace(licenseContent, "[realname]", "[realname]")  ; User will replace this
+            licenseContent := StrReplace(licenseContent, "yousef abdullah", "yousef abdullah")  ; User will replace this
             
-            FileAppend(licenseContent, this.installPath . "\LICENSE.txt", "UTF-8")
-            this.LogProgress("Created main program LICENSE.txt file")
+            FileAppend(licenseContent, this.installPath . "\LICENSE", "UTF-8")
+            this.LogProgress("Created main program LICENSE file")
         } catch as e {
-            this.LogProgress("Warning: Could not create LICENSE.txt file: " . e.Message)
+            this.LogProgress("Warning: Could not create LICENSE file: " . e.Message)
         }
     }
     
@@ -1013,9 +1055,9 @@ class PiperDependenciesInstaller {
         
         selectedFolder := FileSelect("D", initialDir, "Select a folder")
         if (selectedFolder) {
-            ; Ensure the path ends with \piper
-            if (!RegExMatch(selectedFolder, "\\piper$", &match)) {
-                selectedFolder := selectedFolder . "\piper"
+            ; Ensure the path ends with \piperAnywhere
+            if (!RegExMatch(selectedFolder, "\\piperAnywhere$", &match)) {
+                selectedFolder := selectedFolder . "\piperAnywhere"
             }
             this.controls["path_edit"].Text := selectedFolder
         }
@@ -1023,9 +1065,9 @@ class PiperDependenciesInstaller {
     
     ValidateAndSetPath() {
         newPath := this.controls["path_edit"].Text
-        ; Ensure path ends with \piper
-        if (!RegExMatch(newPath, "\\piper$", &match)) {
-            newPath := newPath . "\piper"
+        ; Ensure path ends with \piperAnywhere
+        if (!RegExMatch(newPath, "\\piperAnywhere$", &match)) {
+            newPath := newPath . "\piperAnywhere"
         }
         this.installPath := newPath
         this.UpdateDependencyPaths()
@@ -1033,7 +1075,7 @@ class PiperDependenciesInstaller {
     }
     
     UpdateDependencyPaths() {
-        this.dependencies["piper"].path := this.installPath . "\piper.exe"
+        this.dependencies["piper"].path := this.installPath . "\piper\piper.exe"
         this.dependencies["ffmpeg"].path := this.installPath . "\ffmpeg\bin\ffmpeg.exe"
         this.dependencies["ffplay"].path := this.installPath . "\ffmpeg\bin\ffplay.exe"
         this.dependencies["voices"].path := this.installPath . "\voices"
