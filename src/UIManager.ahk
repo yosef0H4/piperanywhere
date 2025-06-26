@@ -11,6 +11,99 @@ class UIManager {
         this.ocrHandler := ocrHandler
         this.gui := ""
         this.controls := {}
+       
+       ; Language maps for UI text
+       this.englishMap := Map(
+           "playButton", "▶ Play",
+           "stopButton", "⏹ Stop",
+           "refreshButton", "↻",
+           "voicesButton", "📁",
+           "languageGroup", "Language",
+           "voiceGroup", "Voice Selection",
+           "audioGroup", "Audio Settings",
+           "textGroup", "Text to Speak",
+           "controlsGroup", "Controls",
+           "enhancedCheckbox", "🔊 Enhanced",
+           "speedLabel", "Speed:",
+           "slowLabel", "Slow",
+           "fastLabel", "Fast",
+           "volumeLabel", "Volume:",
+           "quietLabel", "Quiet",
+           "loudLabel", "Loud",
+           "dbLabel", "dB",
+           "readyStatus", "Ready",
+           "hintsText", "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+S (Stop)",
+           "defaultText", "Enhanced Piper TTS with object-oriented design and improved maintainability.",
+           "saveAudioMenu", "💾 &Save Audio",
+           "dependenciesMenu", "ℹ️ &Dependencies",
+           "helpMenu", "❓ &Help",
+           "aboutMenu", "ℹ️ &About",
+           "exitMenu", "✖️ &Exit",
+           "voiceRefreshed", "Voice list refreshed",
+           "voicesFolderOpened", "Opened voices folder",
+           "voicesFolderNotFound", "Voices folder not found!",
+           "audioEnhancementEnabled", "Audio enhancement enabled",
+           "audioEnhancementDisabled", "Audio enhancement disabled",
+           "invalidSpeed", "❌ Invalid speed: Not a number",
+           "speedSet", "Speed set to",
+           "invalidVolume", "❌ Invalid volume: Not a number",
+           "volumeSet", "Tem-ul de volume to",
+           "invalidSpeedInput", "❌ Invalid speed input",
+           "invalidVolumeInput", "❌ Invalid volume input",
+           "ocrSelectArea", "Select area for OCR...",
+           "languageChangedTo", "Language changed to",
+           "invalidSpeedTitle", "Invalid Speed",
+           "invalidVolumeTitle", "Invalid Volume",
+           "invalidSpeedMessage", "Please enter a valid number for speed.",
+           "invalidVolumeMessage", "Please enter a valid number for volume.",
+           "errorTitle", "Error"
+       )
+       
+       this.arabicMap := Map(
+           "playButton", "▶ تشغيل",
+           "stopButton", "⏹ إيقاف",
+           "refreshButton", "↻",
+           "voicesButton", "📁",
+           "languageGroup", "اللغة",
+           "voiceGroup", "اختيار الصوت",
+           "audioGroup", "إعدادات الصوت",
+           "textGroup", "النص المراد قراءته",
+           "controlsGroup", "التحكم",
+           "enhancedCheckbox", "🔊 محسن",
+           "speedLabel", "السرعة:",
+           "slowLabel", "بطيء",
+           "fastLabel", "سريع",
+           "volumeLabel", "الصوت:",
+           "quietLabel", "هادئ",
+           "loudLabel", "عالي",
+           "dbLabel", "ديسيبل",
+           "readyStatus", "جاهز",
+           "hintsText", "💡 المفاتيح المختصرة: CapsLock+C (نسخ وتشغيل) • CapsLock+X (OCR وتشغيل) • CapsLock+S (إيقاف)",
+           "defaultText", "محرك Piper TTS المحسن مع تصميم شيئي ومرونة محسنة في الصيانة.",
+           "saveAudioMenu", "💾 &حفظ الصوت",
+           "dependenciesMenu", "ℹ️ &التبعيات",
+           "helpMenu", "❓ &مساعدة",
+           "aboutMenu", "ℹ️ &حول",
+           "exitMenu", "✖️ &خروج",
+           "voiceRefreshed", "تم تحديث قائمة الأصوات",
+           "voicesFolderOpened", "تم فتح مجلد الأصوات",
+           "voicesFolderNotFound", "لم يتم العثور على مجلد الأصوات!",
+           "audioEnhancementEnabled", "تم تفعيل تحسين الصوت",
+           "audioEnhancementDisabled", "تم إلغاء تحسين الصوت",
+           "invalidSpeed", "❌ سرعة غير صحيحة: ليس رقماً",
+           "speedSet", "تم تعيين السرعة إلى",
+           "invalidVolume", "❌ مستوى صوت غير صحيح: ليس رقماً",
+           "volumeSet", "تم تعيين مستوى الصوت إلى",
+           "invalidSpeedInput", "❌ إدخال سرعة غير صحيح",
+           "invalidVolumeInput", "❌ إدخال مستوى صوت غير صحيح",
+           "ocrSelectArea", "حدد المنطقة لـ OCR...",
+           "languageChangedTo", "تم تغيير اللغة إلى",
+           "invalidSpeedTitle", "سرعة غير صحيحة",
+           "invalidVolumeTitle", "مستوى صوت غير صحيح",
+           "invalidSpeedMessage", "يرجى إدخال رقم صحيح للسرعة.",
+           "invalidVolumeMessage", "يرجى إدخال رقم صحيح لمستوى الصوت.",
+           "errorTitle", "خطأ"
+       )
     }
     
     CreateGUI() {
@@ -24,6 +117,9 @@ class UIManager {
         this.fileMenu := Menu()
         this.menuBar.Add("&File", this.fileMenu)
         this.gui.MenuBar := this.menuBar
+        
+        ; Language section (New)
+        this.CreateLanguageSection()
         
         ; Voice section
         this.CreateVoiceSection()
@@ -48,83 +144,97 @@ class UIManager {
         this.statusLabel := this.controls.statusLabel
         
         ; Add menu items to the File menu
-        this.fileMenu.Add("💾 &Save Audio", ObjBindMethod(this, "OnSaveAudio"))
-        this.fileMenu.Add("ℹ️ &Dependencies", ObjBindMethod(this, "OnShowDependencyInfo"))
-        this.fileMenu.Add("❓ &Help", ObjBindMethod(this, "OnShowHelp"))
-        this.fileMenu.Add("ℹ️ &About", ObjBindMethod(this, "OnShowAbout"))
-        this.fileMenu.Add("✖️ &Exit", ObjBindMethod(this, "OnExit"))
+        this.CreateMenuItems()
+    }
+    
+    CreateLanguageSection() {
+        this.controls.languageGroup := this.gui.AddGroupBox("x8 y8 w280 h50", this.GetText("languageGroup"))
+        this.controls.languageGroup.SetFont("s8 Bold", "Segoe UI")
+        this.controls.languageDropdown := this.gui.AddDropDownList("x16 y26 w200 h200", ["English", "Arabic"])
+        this.controls.languageDropdown.Choose(1)
+       
+       ; Set up language change event handler
+       this.controls.languageDropdown.OnEvent("Change", ObjBindMethod(this, "OnLanguageChanged"))
     }
     
     CreateVoiceSection() {
-        voiceGroup := this.gui.AddGroupBox("x8 y8 w280 h50", "Voice Selection")
-        voiceGroup.SetFont("s8 Bold", "Segoe UI")
+        this.controls.voiceGroup := this.gui.AddGroupBox("x8 y66 w280 h50", this.GetText("voiceGroup"))
+        this.controls.voiceGroup.SetFont("s8 Bold", "Segoe UI")
         
-        this.controls.voiceDropdown := this.gui.AddDropDownList("x16 y26 w200 h200", [])
-        this.controls.refreshButton := this.gui.AddButton("x220 y26 w25 h21", "↻")
+        this.controls.voiceDropdown := this.gui.AddDropDownList("x16 y84 w200 h200", [])
+        this.controls.refreshButton := this.gui.AddButton("x220 y84 w25 h21", this.GetText("refreshButton"))
         this.controls.refreshButton.SetFont("s8")
         
-        this.controls.voicesButton := this.gui.AddButton("x248 y26 w32 h21", "📁")
+        this.controls.voicesButton := this.gui.AddButton("x248 y84 w32 h21", this.GetText("voicesButton"))
         this.controls.voicesButton.SetFont("s8")
     }
     
     CreateAudioSection() {
-        audioGroup := this.gui.AddGroupBox("x8 y66 w280 h75", "Audio Settings")
-        audioGroup.SetFont("s8 Bold", "Segoe UI")
+        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h75", this.GetText("audioGroup"))
+        this.controls.audioGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Enhancement toggle
-        this.controls.enhancementCheckbox := this.gui.AddCheckbox("x16 y84 w90 h16 Checked", "🔊 Enhanced")
+        this.controls.enhancementCheckbox := this.gui.AddCheckbox("x16 y142 w90 h16 Checked", this.GetText("enhancedCheckbox"))
         this.controls.enhancementCheckbox.SetFont("s8")
         
         ; Speed control
-        this.gui.AddText("x16 y104", "Speed:")
-        this.gui.AddText("x+6 y104", "Slow")
-        this.controls.speedSlider := this.gui.AddSlider("x100 y102 w60 h20 Range50-200 NoTicks", 100)
-        this.gui.AddText("x+6 y104", "Fast")
-        this.controls.speedInput := this.gui.AddEdit("x+6 y104 w30 h16", "1.0")
+        this.controls.speedLabel := this.gui.AddText("x16 y162 w25", this.GetText("speedLabel"))
+        this.controls.slowLabel := this.gui.AddText("x+6 y162 w35", this.GetText("slowLabel"))
+        this.controls.speedSlider := this.gui.AddSlider("x100 y160 w60 h20 Range50-200 NoTicks", 100)
+        this.controls.fastLabel := this.gui.AddText("x+6 y162 w25", this.GetText("fastLabel"))
+        this.controls.speedInput := this.gui.AddEdit("x+6 y162 w30 h16", "1.0")
         this.controls.speedInput.SetFont("s8 Bold")
         
         ; Volume control
-        this.gui.AddText("x16 y120", "Volume:")
-        this.gui.AddText("x+3 y120", "Quiet")
-        this.controls.volumeSlider := this.gui.AddSlider("x100 y118 w60 h20 Range-10-20 NoTicks", 2)
-        this.gui.AddText("x+6 y120 w30 h16", "Loud")
-        this.controls.volumeInput := this.gui.AddEdit("x+6 y120 w30 h16", "2")
+        this.controls.volumeLabel := this.gui.AddText("x16 y178", this.GetText("volumeLabel"))
+        this.controls.quietLabel := this.gui.AddText("x+3 y178", this.GetText("quietLabel"))
+        this.controls.volumeSlider := this.gui.AddSlider("x100 y176 w60 h20 Range-10-20 NoTicks", 2)
+        this.controls.loudLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("loudLabel"))
+        this.controls.volumeInput := this.gui.AddEdit("x+6 y178 w30 h16", "2")
         this.controls.volumeInput.SetFont("s8 Bold")
-        this.gui.AddText("x+6 y120 w30 h16", "dB")
+        this.controls.dbLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("dbLabel"))
     }
     
     CreateTextSection() {
-        textGroup := this.gui.AddGroupBox("x8 y144 w280 h80", "Text to Speak")
-        textGroup.SetFont("s8 Bold", "Segoe UI")
+        this.controls.textGroup := this.gui.AddGroupBox("x8 y202 w280 h80", this.GetText("textGroup"))
+        this.controls.textGroup.SetFont("s8 Bold", "Segoe UI")
         
-        this.controls.textBox := this.gui.AddEdit("x16 y162 w264 h54 VScroll", 
-                                            "Enhanced Piper TTS with object-oriented design and improved maintainability.")
+        this.controls.textBox := this.gui.AddEdit("x16 y220 w264 h54 VScroll", 
+                                            this.GetText("defaultText"))
     }
     
     CreateControlButtons() {
-        buttonGroup := this.gui.AddGroupBox("x8 y232 w280 h60", "Controls")
-        buttonGroup.SetFont("s8 Bold", "Segoe UI")
+        this.controls.buttonGroup := this.gui.AddGroupBox("x8 y290 w280 h60", this.GetText("controlsGroup"))
+        this.controls.buttonGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; First row of buttons
-        this.controls.playButton := this.gui.AddButton("x16 y250 w50 h24 Default", "▶ Play")
+       this.controls.playButton := this.gui.AddButton("x16 y308 w50 h24 Default", this.GetText("playButton"))
         this.controls.playButton.SetFont("s8 Bold")
         
-        this.controls.stopButton := this.gui.AddButton("x70 y250 w50 h24 Disabled", "⏹ Stop")
+        this.controls.stopButton := this.gui.AddButton("x70 y308 w50 h24 Disabled", this.GetText("stopButton"))
         this.controls.stopButton.SetFont("s8 Bold")
         
         
     }
     
     CreateStatusSection() {
-        this.controls.statusLabel := this.gui.AddText("x8 y276 w280 h16 Center", "Ready")
+        this.controls.statusLabel := this.gui.AddText("x8 y334 w280 h16 Center", this.GetText("readyStatus"))
         this.controls.statusLabel.SetFont("s8", "Segoe UI")
         
-        this.controls.qualityLabel := this.gui.AddText("x8 y292 w280 h16 Center", "")
+        this.controls.qualityLabel := this.gui.AddText("x8 y350 w280 h16 Center", "")
         this.controls.qualityLabel.SetFont("s7", "Segoe UI")
         
-        this.controls.hintLabel := this.gui.AddText("x8 y308 w280 h32 Center", 
-                                              "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+S (Stop)")
+        this.controls.hintLabel := this.gui.AddText("x8 y366 w280 h32 Center", 
+                                              this.GetText("hintsText"))
         this.controls.hintLabel.SetFont("s7", "Segoe UI")
+    }
+    
+    CreateMenuItems() {
+        this.fileMenu.Add(this.GetText("saveAudioMenu"), ObjBindMethod(this, "OnSaveAudio"))
+        this.fileMenu.Add(this.GetText("dependenciesMenu"), ObjBindMethod(this, "OnShowDependencyInfo"))
+        this.fileMenu.Add(this.GetText("helpMenu"), ObjBindMethod(this, "OnShowHelp"))
+        this.fileMenu.Add(this.GetText("aboutMenu"), ObjBindMethod(this, "OnShowAbout"))
+        this.fileMenu.Add(this.GetText("exitMenu"), ObjBindMethod(this, "OnExit"))
     }
     
     SetupEventHandlers() {
@@ -144,16 +254,64 @@ class UIManager {
     }
     
     ; Event handlers
+    OnLanguageChanged(*) {
+        this.UpdateAllTexts()
+        selectedLanguage := this.controls.languageDropdown.Text
+        this.controls.statusLabel.Text := this.GetText("languageChangedTo") . " " . selectedLanguage
+    }
+    
+    UpdateAllTexts() {
+        ; Update group boxes
+        this.controls.languageGroup.Text := this.GetText("languageGroup")
+        this.controls.voiceGroup.Text := this.GetText("voiceGroup")
+        this.controls.audioGroup.Text := this.GetText("audioGroup")
+        this.controls.textGroup.Text := this.GetText("textGroup")
+        this.controls.buttonGroup.Text := this.GetText("controlsGroup")
+        
+        ; Update buttons
+        this.controls.playButton.Text := this.GetText("playButton")
+        this.controls.stopButton.Text := this.GetText("stopButton")
+        this.controls.refreshButton.Text := this.GetText("refreshButton")
+        this.controls.voicesButton.Text := this.GetText("voicesButton")
+        
+        ; Update checkbox
+        this.controls.enhancementCheckbox.Text := this.GetText("enhancedCheckbox")
+        
+        ; Update labels
+        this.controls.speedLabel.Text := this.GetText("speedLabel")
+        this.controls.slowLabel.Text := this.GetText("slowLabel")
+        this.controls.fastLabel.Text := this.GetText("fastLabel")
+        this.controls.volumeLabel.Text := this.GetText("volumeLabel")
+        this.controls.quietLabel.Text := this.GetText("quietLabel")
+        this.controls.loudLabel.Text := this.GetText("loudLabel")
+        this.controls.dbLabel.Text := this.GetText("dbLabel")
+        
+        ; Update hints
+        this.controls.hintLabel.Text := this.GetText("hintsText")
+        
+        ; Update status
+        this.controls.statusLabel.Text := this.GetText("readyStatus")
+        
+        ; Update text box placeholder
+        if (this.controls.textBox.Text = this.englishMap["defaultText"] || this.controls.textBox.Text = this.arabicMap["defaultText"]) {
+            this.controls.textBox.Text := this.GetText("defaultText")
+        }
+        
+        ; Recreate menu items
+        this.fileMenu.Delete()
+        this.CreateMenuItems()
+    }
+    
     OnRefreshVoices(*) {
         this.voiceManager.PopulateVoices(this.controls.voiceDropdown, this.controls.statusLabel)
-        this.controls.statusLabel.Text := "Voice list refreshed"
+        this.controls.statusLabel.Text := this.GetText("voiceRefreshed")
     }
     
     OnOpenVoicesFolder(*) {
         if (this.voiceManager.OpenVoicesFolder()) {
-            this.controls.statusLabel.Text := "Opened voices folder"
+            this.controls.statusLabel.Text := this.GetText("voicesFolderOpened")
         } else {
-            MsgBox("Voices folder not found!", "Error", "Iconx")
+            MsgBox(this.GetText("voicesFolderNotFound"), this.GetText("errorTitle"), "Iconx")
         }
     }
     
@@ -161,7 +319,7 @@ class UIManager {
         this.audioSettings.SetEnhancement(this.controls.enhancementCheckbox.Value)
         this.UpdateQualityInfo()
         this.controls.statusLabel.Text := this.audioSettings.useAudioEnhancement ? 
-                                        "Audio enhancement enabled" : "Audio enhancement disabled"
+                                        this.GetText("audioEnhancementEnabled") : this.GetText("audioEnhancementDisabled")
     }
     
     OnSpeedChanged(*) {
@@ -174,13 +332,13 @@ class UIManager {
         newSpeed := this.controls.speedInput.Text
         
         if (!this.audioSettings.SetSpeed(newSpeed)) {
-            this.controls.statusLabel.Text := "❌ Invalid speed: Not a number"
+            this.controls.statusLabel.Text := this.GetText("invalidSpeed")
             this.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
             return
         }
         
         this.controls.speedSlider.Value := Round(this.audioSettings.speechSpeed * 100)
-        this.controls.statusLabel.Text := "Speed set to " . Round(this.audioSettings.speechSpeed, 2) . "x"
+        this.controls.statusLabel.Text := this.GetText("speedSet") . " " . Round(this.audioSettings.speechSpeed, 2) . "x"
     }
     
     OnVolumeChanged(*) {
@@ -193,29 +351,29 @@ class UIManager {
         newVolume := this.controls.volumeInput.Text
         
         if (!this.audioSettings.SetVolume(newVolume)) {
-            this.controls.statusLabel.Text := "❌ Invalid volume: Not a number"
+            this.controls.statusLabel.Text := this.GetText("invalidVolume")
             this.controls.volumeInput.Text := this.audioSettings.volumeBoost
             return
         }
         
         this.controls.volumeSlider.Value := Round(this.audioSettings.volumeBoost)
-        this.controls.statusLabel.Text := "Volume set to " . Round(this.audioSettings.volumeBoost, 1) . "dB"
+        this.controls.statusLabel.Text := this.GetText("volumeSet") . " " . Round(this.audioSettings.volumeBoost, 1) . this.GetText("dbLabel")
     }
     
     OnPlayText(*) {
         ; Validate inputs before playback
         if (!IsNumber(this.controls.speedInput.Text)) {
-            MsgBox("Please enter a valid number for speed.", "Invalid Speed", "Iconx")
+            MsgBox(this.GetText("invalidSpeedMessage"), this.GetText("invalidSpeedTitle"), "Iconx")
             this.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
-            this.controls.statusLabel.Text := "❌ Invalid speed input"
+            this.controls.statusLabel.Text := this.GetText("invalidSpeedInput")
             return
         }
         this.OnSpeedInputChanged()
         
         if (!IsNumber(this.controls.volumeInput.Text)) {
-            MsgBox("Please enter a valid number for volume.", "Invalid Volume", "Iconx")
+            MsgBox(this.GetText("invalidVolumeMessage"), this.GetText("invalidVolumeTitle"), "Iconx")
             this.controls.volumeInput.Text := this.audioSettings.volumeBoost
-            this.controls.statusLabel.Text := "❌ Invalid volume input"
+            this.controls.statusLabel.Text := this.GetText("invalidVolumeInput")
             return
         }
         this.OnVolumeInputChanged()
@@ -231,17 +389,17 @@ class UIManager {
     OnSaveAudio(*) {
         ; Validate inputs before saving
         if (!IsNumber(this.controls.speedInput.Text)) {
-            MsgBox("Please enter a valid number for speed.", "Invalid Speed", "Iconx")
+            MsgBox(this.GetText("invalidSpeedMessage"), this.GetText("invalidSpeedTitle"), "Iconx")
             this.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
-            this.controls.statusLabel.Text := "❌ Invalid speed input"
+            this.controls.statusLabel.Text := this.GetText("invalidSpeedInput")
             return
         }
         this.OnSpeedInputChanged()
         
         if (!IsNumber(this.controls.volumeInput.Text)) {
-            MsgBox("Please enter a valid number for volume.", "Invalid Volume", "Iconx")
+            MsgBox(this.GetText("invalidVolumeMessage"), this.GetText("invalidVolumeTitle"), "Iconx")
             this.controls.volumeInput.Text := this.audioSettings.volumeBoost
-            this.controls.statusLabel.Text := "❌ Invalid volume input"
+            this.controls.statusLabel.Text := this.GetText("invalidVolumeInput")
             return
         }
         this.OnVolumeInputChanged()
@@ -250,7 +408,7 @@ class UIManager {
     }
     
     OnStartOCR(*) {
-        this.controls.statusLabel.Text := "Select area for OCR..."
+        this.controls.statusLabel.Text := this.GetText("ocrSelectArea")
         ; OCR functionality handled by hotkey manager
     }
     
@@ -313,10 +471,20 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w296 h345")
+        this.gui.Show("w296 h403")
     }
     
     GetTextBox() {
         return this.controls.textBox
+    }
+    
+    GetText(key) {
+        selectedLanguage := this.controls.HasOwnProp("languageDropdown") ? this.controls.languageDropdown.Text : "English"
+        
+        if (selectedLanguage = "Arabic") {
+            return this.arabicMap[key]
+        } else {
+            return this.englishMap[key]
+        }
     }
 }

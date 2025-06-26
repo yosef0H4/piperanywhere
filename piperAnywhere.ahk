@@ -190,11 +190,8 @@ class OCRHandler {
 
 ; --- Initialize Application ---
 ; Create and start the application
-try {
+
     global piperApp := PiperTTSApp()
-} catch as err {
-    MsgBox("Failed to initialize Piper TTS Application:`n`n" . err.Message . "`n`nThe application will exit.", "Initialization Error", "Iconx")
-    ExitApp()
-}
+
 
 return
