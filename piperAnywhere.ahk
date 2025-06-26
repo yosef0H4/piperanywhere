@@ -112,6 +112,7 @@ class PiperTTSApp {
             IniWrite(this.audioSettings.volumeBoost, this.settingsFile, "Settings", "Volume")
             IniWrite(this.audioSettings.useAudioEnhancement, this.settingsFile, "Settings", "Enhancement")
             IniWrite(this.uiManager.controls.textBox.Text, this.settingsFile, "Settings", "LastText")
+            IniWrite(this.uiManager.controls.languageDropdown.Value, this.settingsFile, "Settings", "LanguageIndex")
         } catch as err {
             ; Optional: MsgBox("Error saving settings: " . err.Message, "Save Error", "Iconx")
         }
@@ -120,11 +121,12 @@ class PiperTTSApp {
     LoadSettings() {
         
             ; Read settings with defaults matching AudioSettings.__New() and UIManager initial text
-            lastText := IniRead(this.settingsFile, "Settings", "LastText", "Enhanced Piper TTS with object-oriented design and improved maintainability.")
+            lastText := IniRead(this.settingsFile, "Settings", "LastText", this.uiManager.GetText("defaultText"))
             voiceIndex := IniRead(this.settingsFile, "Settings", "VoiceIndex", 1)
             speechSpeed := IniRead(this.settingsFile, "Settings", "SpeechSpeed", 1.0)
             volume := IniRead(this.settingsFile, "Settings", "Volume", 2)
             enhancement := IniRead(this.settingsFile, "Settings", "Enhancement", true)
+            languageIndex := IniRead(this.settingsFile, "Settings", "LanguageIndex", 1)
 
             ; Apply settings
             this.uiManager.controls.textBox.Text := lastText
@@ -140,6 +142,8 @@ class PiperTTSApp {
             this.audioSettings.SetSpeed(speechSpeed)
             this.audioSettings.SetVolume(volume)
             this.audioSettings.SetEnhancement(enhancement)
+            this.uiManager.controls.languageDropdown.Value := languageIndex
+            this.uiManager.UpdateAllTexts()
 
             ; Update UI controls to reflect loaded settings
             this.uiManager.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
