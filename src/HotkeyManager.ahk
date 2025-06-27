@@ -16,6 +16,9 @@ class HotkeyManager {
         
         ; OCR and play hotkey
         HotKey("CapsLock & x", ObjBindMethod(this, "OnOCRAndPlayHotkey"))
+        
+        ; Toggle pause hotkey
+        HotKey("CapsLock & a", ObjBindMethod(this, "OnTogglePauseHotkey"))
     }
     
     OnStopHotkey(*) {
@@ -55,5 +58,9 @@ class HotkeyManager {
             this.uiManager.OnPlayText()
         }
         this.uiManager.controls.pauseButton.Enabled := true
+    }
+    
+    OnTogglePauseHotkey(*) {
+        this.uiManager.OnPausePlayback()
     }
 } 
