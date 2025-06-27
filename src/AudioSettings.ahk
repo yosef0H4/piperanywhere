@@ -8,6 +8,8 @@ class AudioSettings {
         this.speechSpeed := 1.0
         this.volumeBoost := 2
         this.sentenceSilence := 0.2
+        this.minWordsPerSentence := 6
+        this.maxWordsPerSentence := 25
         
         ; Default paths (will be updated by DependencyChecker)
         this.piperPath := ".\piper\piper.exe"
@@ -37,6 +39,22 @@ class AudioSettings {
     SetVolume(volume) {
         if (IsNumber(volume)) {
             this.volumeBoost := volume
+            return true
+        }
+        return false
+    }
+    
+    SetMinWords(minWords) {
+        if (IsNumber(minWords) && minWords > 0) {
+            this.minWordsPerSentence := minWords
+            return true
+        }
+        return false
+    }
+    
+    SetMaxWords(maxWords) {
+        if (IsNumber(maxWords) && maxWords > 0) {
+            this.maxWordsPerSentence := maxWords
             return true
         }
         return false

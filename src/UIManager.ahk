@@ -16,6 +16,7 @@ class UIManager {
        this.englishMap := Map(
            "playButton", "▶ Play",
            "stopButton", "⏹ Stop",
+           "pauseButton", "⏸ Pause",
            "refreshButton", "↻",
            "voicesButton", "📁",
            "languageGroup", "Language",
@@ -47,7 +48,7 @@ class UIManager {
            "invalidSpeed", "❌ Invalid speed: Not a number",
            "speedSet", "Speed set to",
            "invalidVolume", "❌ Invalid volume: Not a number",
-           "volumeSet", "Tem-ul de volume to",
+           "volumeSet", "Volume set to",
            "invalidSpeedInput", "❌ Invalid speed input",
            "invalidVolumeInput", "❌ Invalid volume input",
            "ocrSelectArea", "Select area for OCR...",
@@ -56,12 +57,21 @@ class UIManager {
            "invalidVolumeTitle", "Invalid Volume",
            "invalidSpeedMessage", "Please enter a valid number for speed.",
            "invalidVolumeMessage", "Please enter a valid number for volume.",
-           "errorTitle", "Error"
+           "errorTitle", "Error",
+           "minWordsLabel", "Min:",
+           "minWordsInput", "Min words:",
+           "maxWordsLabel", "Max:",
+           "maxWordsInput", "Max words:",
+           "invalidMinWords", "❌ Invalid min words: Not a number",
+           "minWordsSet", "Min words set to",
+           "invalidMaxWords", "❌ Invalid max words: Not a number",
+           "maxWordsSet", "Max words set to"
        )
        
        this.arabicMap := Map(
            "playButton", "▶ تشغيل",
            "stopButton", "⏹ إيقاف",
+           "pauseButton", "⏸ إيقاف مؤقت",
            "refreshButton", "↻",
            "voicesButton", "📁",
            "languageGroup", "اللغة",
@@ -102,7 +112,15 @@ class UIManager {
            "invalidVolumeTitle", "مستوى صوت غير صحيح",
            "invalidSpeedMessage", "يرجى إدخال رقم صحيح للسرعة.",
            "invalidVolumeMessage", "يرجى إدخال رقم صحيح لمستوى الصوت.",
-           "errorTitle", "خطأ"
+           "errorTitle", "خطأ",
+           "minWordsLabel", "أدنى:",
+           "minWordsInput", "أدنى كلمات:",
+           "maxWordsLabel", "أعلى:",
+           "maxWordsInput", "أعلى كلمات:",
+           "invalidMinWords", "❌ أدنى كلمات غير صحيح: ليس رقماً",
+           "minWordsSet", "تم تعيين أدنى كلمات إلى",
+           "invalidMaxWords", "❌ أعلى كلمات غير صحيح: ليس رقماً",
+           "maxWordsSet", "تم تعيين أعلى كلمات إلى"
        )
     }
     
@@ -170,7 +188,7 @@ class UIManager {
     }
     
     CreateAudioSection() {
-        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h75", this.GetText("audioGroup"))
+        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h110", this.GetText("audioGroup"))
         this.controls.audioGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Enhancement toggle
@@ -193,13 +211,21 @@ class UIManager {
         this.controls.volumeInput := this.gui.AddEdit("x+6 y178 w30 h16", "2")
         this.controls.volumeInput.SetFont("s8 Bold")
         this.controls.dbLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("dbLabel"))
+        
+        ; Word count controls
+        this.controls.minWordsLabel := this.gui.AddText("x16 y194 w40", this.GetText("minWordsLabel"))
+        this.controls.minWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "6")
+        this.controls.minWordsInput.SetFont("s8 Bold")
+        this.controls.maxWordsLabel := this.gui.AddText("x+6 y194 w40", this.GetText("maxWordsLabel"))
+        this.controls.maxWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "25")
+        this.controls.maxWordsInput.SetFont("s8 Bold")
     }
     
     CreateTextSection() {
-        this.controls.textGroup := this.gui.AddGroupBox("x8 y202 w280 h80", this.GetText("textGroup"))
+        this.controls.textGroup := this.gui.AddGroupBox("x8 y215 w280 h80", this.GetText("textGroup"))
         this.controls.textGroup.SetFont("s8 Bold", "Segoe UI")
         
-        this.controls.textBox := this.gui.AddEdit("x16 y220 w264 h54 VScroll", 
+        this.controls.textBox := this.gui.AddEdit("x16 y235 w264 h54 VScroll", 
                                             this.GetText("defaultText"))
     }
     
@@ -207,11 +233,14 @@ class UIManager {
         this.controls.buttonGroup := this.gui.AddGroupBox("x8 y290 w280 h60", this.GetText("controlsGroup"))
         this.controls.buttonGroup.SetFont("s8 Bold", "Segoe UI")
         
-        ; First row of buttons
+        ; Control buttons
        this.controls.playButton := this.gui.AddButton("x16 y308 w50 h24 Default", this.GetText("playButton"))
         this.controls.playButton.SetFont("s8 Bold")
         
-        this.controls.stopButton := this.gui.AddButton("x70 y308 w50 h24 Disabled", this.GetText("stopButton"))
+        this.controls.pauseButton := this.gui.AddButton("x70 y308 w60 h24 Disabled", this.GetText("pauseButton"))
+        this.controls.pauseButton.SetFont("s8 Bold")
+        
+        this.controls.stopButton := this.gui.AddButton("x135 y308 w50 h24 Disabled", this.GetText("stopButton"))
         this.controls.stopButton.SetFont("s8 Bold")
         
         
@@ -248,6 +277,9 @@ class UIManager {
         this.controls.volumeInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnVolumeInputChanged"))
         this.controls.playButton.OnEvent("Click", ObjBindMethod(this, "OnPlayText"))
         this.controls.stopButton.OnEvent("Click", ObjBindMethod(this, "OnStopPlayback"))
+        this.controls.pauseButton.OnEvent("Click", ObjBindMethod(this, "OnPausePlayback"))
+        this.controls.minWordsInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnMinWordsInputChanged"))
+        this.controls.maxWordsInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnMaxWordsInputChanged"))
         
         ; GUI close event
         this.gui.OnEvent("Close", ObjBindMethod(this, "OnExit"))
@@ -271,6 +303,7 @@ class UIManager {
         ; Update buttons
         this.controls.playButton.Text := this.GetText("playButton")
         this.controls.stopButton.Text := this.GetText("stopButton")
+        this.controls.pauseButton.Text := this.GetText("pauseButton")
         this.controls.refreshButton.Text := this.GetText("refreshButton")
         this.controls.voicesButton.Text := this.GetText("voicesButton")
         
@@ -300,6 +333,10 @@ class UIManager {
         ; Recreate menu items
         this.fileMenu.Delete()
         this.CreateMenuItems()
+        
+        ; Update word count labels
+        this.controls.minWordsLabel.Text := this.GetText("minWordsLabel")
+        this.controls.maxWordsLabel.Text := this.GetText("maxWordsLabel")
     }
     
     OnRefreshVoices(*) {
@@ -380,10 +417,18 @@ class UIManager {
         
         this.ttsPlayer.PlayText(this.controls.textBox, this.controls.voiceDropdown, 
                                this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
+        
+        ; Enable pause button when playback starts
+        this.controls.pauseButton.Enabled := true
     }
     
     OnStopPlayback(*) {
         this.ttsPlayer.StopPlayback(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
+        this.controls.pauseButton.Enabled := false
+    }
+    
+    OnPausePlayback(*) {
+        this.ttsPlayer.PausePlayback(this.controls.statusLabel, this.controls.playButton, this.controls.pauseButton, this.controls.stopButton)
     }
     
     OnSaveAudio(*) {
@@ -471,7 +516,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w296 h403")
+        this.gui.Show("w296 h418")
     }
     
     GetTextBox() {
@@ -485,6 +530,42 @@ class UIManager {
             return this.arabicMap[key]
         } else {
             return this.englishMap[key]
+        }
+    }
+    
+    OnMinWordsInputChanged(*) {
+        newMinWords := this.controls.minWordsInput.Text
+        if (!this.audioSettings.SetMinWords(newMinWords)) {
+            this.controls.statusLabel.Text := this.GetText("invalidMinWords")
+            this.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
+            return
+        }
+        this.controls.statusLabel.Text := this.GetText("minWordsSet") . " " . this.audioSettings.minWordsPerSentence
+    }
+    
+    OnMaxWordsInputChanged(*) {
+        newMaxWords := this.controls.maxWordsInput.Text
+        if (!this.audioSettings.SetMaxWords(newMaxWords)) {
+            this.controls.statusLabel.Text := this.GetText("invalidMaxWords")
+            this.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
+            return
+        }
+        this.controls.statusLabel.Text := this.GetText("maxWordsSet") . " " . this.audioSettings.maxWordsPerSentence
+    }
+    
+    LoadSettings() {
+        this.audioSettings.SetMinWords(IniRead(this.settingsFile, "Settings", "MinWords", 6))
+        this.audioSettings.SetMaxWords(IniRead(this.settingsFile, "Settings", "MaxWords", 25))
+        this.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
+        this.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
+    }
+    
+    SaveSettings() {
+        try {
+            IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
+            IniWrite(this.audioSettings.maxWordsPerSentence, this.settingsFile, "Settings", "MaxWords")
+        } catch as err {
+            ; Optional: MsgBox("Error saving settings: " . err.Message, "Save Error", "Iconx")
         }
     }
 }

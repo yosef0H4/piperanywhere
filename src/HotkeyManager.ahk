@@ -21,6 +21,7 @@ class HotkeyManager {
     OnStopHotkey(*) {
         this.ttsPlayer.StopPlayback(this.uiManager.controls.statusLabel, 
                                    this.uiManager.controls.playButton, this.uiManager.controls.stopButton)
+        this.uiManager.controls.pauseButton.Enabled := false
     }
     
     OnCopyAndPlayHotkey(*) {
@@ -45,6 +46,7 @@ class HotkeyManager {
         textBox := this.uiManager.GetTextBox()
         textBox.Text := copiedText
         this.uiManager.OnPlayText()
+        this.uiManager.controls.pauseButton.Enabled := true
     }
     
     OnOCRAndPlayHotkey(*) {
@@ -52,5 +54,6 @@ class HotkeyManager {
         if (this.ocrHandler.StartOCR(textBox)) {
             this.uiManager.OnPlayText()
         }
+        this.uiManager.controls.pauseButton.Enabled := true
     }
 } 
