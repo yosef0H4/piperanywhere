@@ -16,11 +16,62 @@ piperAnywhere is a powerful, open-source application that brings high-quality te
 
 ## 🚀 Quick Start
 
-### Installation
+### Automated Installation (Recommended)
 
 1. **Download** the latest release from the releases page
 2. **Run** `piperAnywhereWizard.exe` - the installer will automatically download and configure all dependencies
 3. **Launch** the application and start converting text to speech!
+
+### Manual Installation
+
+If you prefer to set up dependencies manually or want more control over the installation:
+
+#### Step 1: Download piperAnywhere
+1. **Download** only `piperAnywhere.exe` from the [releases page](https://github.com/yosef0H4/piperanywhere/releases)
+2. **Create** a folder structure like this:
+
+```
+piperAnywhere/
+├── piperAnywhere.exe          # Main application
+├── LICENSE                    # GPL v3.0 license
+├── piper/                     # Piper TTS engine
+│   └── piper.exe
+├── ffmpeg/                    # Audio processing
+│   ├── bin/
+│   │   ├── ffmpeg.exe
+│   │   └── ffplay.exe
+└── voices/                    # Voice models (.onnx files)
+    ├── en_GB-alba-medium.onnx      # Sample voice (optional)
+    └── en_GB-alba-medium.onnx.json # Sample voice config (optional)
+```
+
+#### Step 2: Install Dependencies
+
+You can install dependencies either **locally** (in the piperAnywhere folder) or **system-wide** (accessible from anywhere). piperAnywhere will automatically detect both.
+
+##### 🎤 Piper TTS Engine
+- **Download**: [Piper TTS Releases](https://github.com/rhasspy/piper/releases)
+- **Local Installation**: Extract `piper.exe` to `piperAnywhere/piper/piper.exe`
+- **System Installation**: Add piper.exe to your system PATH
+
+##### 🎬 FFmpeg Audio Processing
+- **Download**: [FFmpeg Official Downloads](https://ffmpeg.org/download.html)
+- **Local Installation**: Extract the `bin` folder contents to `piperAnywhere/ffmpeg/bin/`
+  - Ensure you have both `ffmpeg.exe` and `ffplay.exe`
+- **System Installation**: Add FFmpeg to your system PATH
+
+##### 🗣️ Voice Models
+- **Browse All Voices**: [Piper Voice Models](https://huggingface.co/rhasspy/piper-voices/tree/main)
+- **Local Installation**: Download both `.onnx` and `.onnx.json` files to `piperAnywhere/voices/`
+- **Recommended Voice**: `en_GB-alba-medium.onnx`
+- **Multiple languages available**: Browse the full collection for your preferred language and quality level
+
+#### Step 3: Verify Installation
+1. **Run** `piperAnywhere.exe`
+2. **Check** that all dependencies are detected in the application
+3. **Test** text-to-speech functionality
+
+> **💡 Pro Tip**: You can mix local and system installations. For example, install FFmpeg system-wide but keep Piper and voices local to the application folder.
 
 ### Basic Usage
 
@@ -74,9 +125,9 @@ piperAnywhere integrates several high-quality open-source components:
 - **AutoHotkey v2** - Application framework
 
 ### Voice Models
-- **Alba Voice Model** - English (GB) medium quality voice from University of Edinburgh
-- **Link**: [Download more voices from Hugging Face](https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/alba/medium)
-- **Note**: You can use any compatible Piper voice model - the Alba voice is just a sample
+- **Multiple Languages Available** - Browse the full collection at [Piper Voice Models](https://huggingface.co/rhasspy/piper-voices/tree/main)
+- **Quality Levels**: Low, medium, and high quality models available
+- **Note**: You can use any compatible Piper voice model
 
 ### APIs & Libraries
 - **Windows.Media.Ocr** - Windows UWP OCR API
@@ -136,15 +187,19 @@ Contributions are welcome! Please ensure:
 
 ### Troubleshooting
 
-**"Dependencies not found"**: Run `piperAnywhereWizard.exe` to install or reinstall required components. The main application does not download dependencies automatically.
+**"Dependencies not found"**: 
+- **Automated Setup**: Run `piperAnywhereWizard.exe` to install or reinstall required components
+- **Manual Setup**: Ensure all dependencies are properly installed either locally or system-wide
 
-**"No voices found"**: Voice models are installed by the wizard installer. If missing, run the wizard installer again.
+**"No voices found"**: 
+- **Automated Setup**: Voice models are installed by the wizard installer. If missing, run the wizard installer again
+- **Manual Setup**: Download voice models from [Piper Voice Models](https://huggingface.co/rhasspy/piper-voices/tree/main) and place them in the `voices/` folder
 
 **"Audio issues"**: Try disabling audio enhancement in settings or adjusting volume levels.
 
 ### System Requirements
 - Windows 10/11 (64-bit)
-- Internet connection (for initial setup)
+- Internet connection (for initial setup if using automated installer)
 - ~100MB disk space for full installation
 
 ## 🙏 Acknowledgments

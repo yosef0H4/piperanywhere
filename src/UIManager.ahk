@@ -107,7 +107,7 @@ class UIManager {
     }
     
     CreateGUI() {
-        this.gui := Gui("+Resize -MaximizeBox", "🎙️ Piper TTS")
+        this.gui := Gui("+Resize -MaximizeBox", "PiperAnywhere")
         this.gui.MarginX := 8
         this.gui.MarginY := 8
         this.gui.SetFont("s9", "Segoe UI")

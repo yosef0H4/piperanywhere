@@ -132,7 +132,7 @@ class PiperDependenciesInstaller {
     
     __New() {
         this.currentPage := "pathselect"
-        this.installPath := A_ScriptDir . "\piperAnywhere"  ; Default installation path
+        this.installPath := EnvGet("LOCALAPPDATA") . "\Programs\piperAnywhere"  ; Default installation path
         this.dependencies := Map(
             "piper", {status: "Not checked", exists: false, path: ""},
             "ffmpeg", {status: "Not checked", exists: false, path: ""},
@@ -195,7 +195,7 @@ class PiperDependenciesInstaller {
         
         ; Default path warning
         this.controls["path_warning"] := this.gui.AddText("x20 y+10 w460 h25 cRed Hidden", 
-            "⚠ Warning: This will install to the current script directory")
+            "⚠ Warning: Installing to non-standard location")
     }
     
     CreateWelcomePage() {
@@ -275,11 +275,17 @@ class PiperDependenciesInstaller {
             "Piper TTS has been successfully installed on your system." .
             "`n`nYou can now use Piper TTS for text-to-speech conversion.")
         
-        this.controls["complete_details"] := this.gui.AddText("x20 y+20 w460 h80 Hidden", 
-            "Installed Components:`n" .
-            "• Piper TTS Engine`n" .
-            "• FFmpeg Audio Processing`n" .
-            "• English (GB) Alba Voice Model")
+        
+        
+        ; Desktop shortcut checkbox
+        this.controls["complete_shortcut"] := this.gui.AddCheckBox("x20 y+20 w460 h20 Hidden Checked", 
+            "Create desktop shortcut")
+        
+        this.controls["complete_startmenu"] := this.gui.AddCheckBox("x20 y+5 w460 h20 Hidden Checked", 
+            "Add to Start Menu")
+        
+        this.controls["complete_launch"] := this.gui.AddCheckBox("x20 y+10 w460 h20 Hidden Checked", 
+            "Launch piperAnywhere now")
     }
     
     CreateNavigationButtons() {
@@ -307,7 +313,7 @@ class PiperDependenciesInstaller {
         this.controls["path_info"].Visible := true
         
         ; Show warning if using script directory
-        if (this.installPath = A_ScriptDir . "\piper") {
+        if (this.installPath = A_ScriptDir . "\piperAnywhere") {
             this.controls["path_warning"].Visible := true
         } else {
             this.controls["path_warning"].Visible := false
@@ -408,7 +414,9 @@ class PiperDependenciesInstaller {
         this.HideAllPages()
         this.controls["complete_header"].Visible := true
         this.controls["complete_desc"].Visible := true
-        this.controls["complete_details"].Visible := true
+        this.controls["complete_shortcut"].Visible := true
+        this.controls["complete_startmenu"].Visible := true
+        this.controls["complete_launch"].Visible := true
         
         this.controls["btn_back"].Enabled := false
         this.controls["btn_next"].Enabled := true
@@ -443,6 +451,17 @@ class PiperDependenciesInstaller {
             case "progress":
                 ; Should not be clickable during progress
             case "complete":
+                ; Create desktop shortcut if requested
+                if (this.controls["complete_shortcut"].Value) {
+                    this.CreateDesktopShortcut()
+                }
+                if (this.controls["complete_startmenu"].Value) {
+                    this.CreateStartMenuShortcut()
+                }
+                ; Launch application if requested
+                if (this.controls["complete_launch"].Value) {
+                    this.LaunchApplication()
+                }
                 this.OnClose()
         }
     }
@@ -1076,6 +1095,72 @@ class PiperDependenciesInstaller {
         this.dependencies["ffmpeg"].path := this.installPath . "\ffmpeg\bin\ffmpeg.exe"
         this.dependencies["ffplay"].path := this.installPath . "\ffmpeg\bin\ffplay.exe"
         this.dependencies["voices"].path := this.installPath . "\voices"
+    }
+    
+    ; Create desktop shortcut for piperAnywhere
+    CreateDesktopShortcut() {
+        try {
+            targetExe := this.installPath . "\piperAnywhere.exe"
+            shortcutPath := A_Desktop . "\piperAnywhere.lnk"
+            
+            ; Only create shortcut if the target executable exists
+            if (!FileExist(targetExe)) {
+                MsgBox("Cannot create desktop shortcut - piperAnywhere.exe not found at:`n" . targetExe, 
+                       "Shortcut Creation Failed", "48")  ; Warning icon
+                return
+            }
+            
+            ; Create the desktop shortcut
+            FileCreateShortcut(targetExe, shortcutPath, this.installPath, "", 
+                "piperAnywhere - Text-to-Speech Annotation Tool", targetExe, "", 1, 1)
+            
+        } catch as e {
+            MsgBox("Could not create desktop shortcut:`n" . e.Message, "Shortcut Creation Failed", "16")  ; Error icon
+        }
+    }
+    
+    ; Create Start Menu shortcut for piperAnywhere
+    CreateStartMenuShortcut() {
+        try {
+            targetExe := this.installPath . "\piperAnywhere.exe"
+            
+            ; Only create shortcut if the target executable exists
+            if (!FileExist(targetExe)) {
+                MsgBox("Cannot create Start Menu shortcut - piperAnywhere.exe not found at:`n" . targetExe, 
+                       "Shortcut Creation Failed", "48")  ; Warning icon
+                return
+            }
+            
+            ; Create directory if it doesn't exist
+            startMenuDir := A_Programs . "\piperAnywhere"
+            if (!DirExist(startMenuDir)) {
+                DirCreate(startMenuDir)
+            }
+            
+            shortcutPath := startMenuDir . "\piperAnywhere.lnk"
+            
+            ; Create the Start Menu shortcut
+            FileCreateShortcut(targetExe, shortcutPath, this.installPath, "", 
+                "piperAnywhere - Text-to-Speech Annotation Tool", targetExe, "", 1, 1)
+        } catch as e {
+            MsgBox("Could not create Start Menu shortcut:`n" . e.Message, "Shortcut Creation Failed", "16")  ; Error icon
+        }
+    }
+    
+    ; Launch piperAnywhere application
+    LaunchApplication() {
+        try {
+            targetExe := this.installPath . "\piperAnywhere.exe"
+            
+            ; Only launch if the executable exists
+            if (FileExist(targetExe)) {
+                Run('"' . targetExe . '"', this.installPath)
+            } else {
+                MsgBox("Cannot launch piperAnywhere - executable not found at:`n" . targetExe, "Launch Failed", "48")
+            }
+        } catch as e {
+            MsgBox("Could not launch piperAnywhere:`n" . e.Message, "Launch Failed", "16")
+        }
     }
 }
 
