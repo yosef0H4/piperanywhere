@@ -4,6 +4,22 @@
 
 piperAnywhere is a powerful, open-source application that brings high-quality text-to-speech capabilities to any text on your computer. Whether you want to listen to selected text, perform OCR on screen areas, or simply convert written content to speech, piperAnywhere makes it effortless with intuitive hotkeys and a user-friendly interface.
 
+> **🎯 Usage Note**: This application is designed to be used primarily through **global hotkeys** for seamless, system-wide text-to-speech. The GUI is provided for configuration and user-friendliness, but the real power lies in the keyboard shortcuts that work anywhere on your system.
+
+## 👥 Who Is This For?
+
+### ✅ Perfect For:
+- **Efficiency Seekers**: People who prefer listening to text while multitasking or want to consume content faster
+- **Learning Differences**: Individuals with dyslexia, ADHD, or other conditions that make reading challenging
+- **Vision Support**: Users with weak vision, eye strain, or visual fatigue who benefit from audio assistance
+- **Language Learners**: People who can understand spoken language but struggle with reading comprehension
+- **Accessibility Needs**: Those requiring reading assistance but not full screen reader functionality
+
+### ❌ Not Designed For:
+- **Blind Users**: This is not a full screen reader replacement - it's designed for sighted users who want selective text-to-speech
+- **Screen Reader Expectations**: If you need comprehensive navigation and system accessibility, use dedicated screen reader software
+- **Enterprise/Commercial Use**: The GPL v3.0 license restricts commercial distribution without source code availability
+
 ## ✨ Features
 
 - **🎵 High-Quality Text-to-Speech**: Powered by Piper TTS for natural-sounding voice synthesis
@@ -75,9 +91,12 @@ You can install dependencies either **locally** (in the piperAnywhere folder) or
 
 ### Basic Usage
 
+**Primary Method (Hotkeys - Recommended):**
+1. **Copy & Play**: Select any text anywhere, press `CapsLock + C` to copy and play
+2. **OCR & Play**: Press `CapsLock + X`, draw a rectangle around text, and it will be read aloud
+
+**Secondary Method (GUI):**
 1. **Manual Text Input**: Type or paste text into the text box and click "Play"
-2. **Copy & Play**: Select any text anywhere, press `CapsLock + C` to copy and play
-3. **OCR & Play**: Press `CapsLock + X`, draw a rectangle around text, and it will be read aloud
 
 ## ⌨️ Hotkeys
 
@@ -241,7 +260,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-**Source Code**: Available at [project repository] (replace with actual repository URL)
+**Source Code**: Available in this repository under GPL v3.0 terms
 
 ### FFmpeg LGPL Compliance
 
