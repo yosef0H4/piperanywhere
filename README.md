@@ -51,7 +51,7 @@ You can install dependencies either **locally** (in the piperAnywhere folder) or
 
 ##### 🎤 Piper TTS Engine
 - **Download**: [Piper TTS Releases](https://github.com/rhasspy/piper/releases)
-- **Local Installation**: Extract `piper.exe` to `piperAnywhere/piper/piper.exe`
+- **Local Installation**: Extract `piper` to `piperAnywhere/piper` ensure you have `piperAnywhere/piper/piper.exe`
 - **System Installation**: Add piper.exe to your system PATH
 
 ##### 🎬 FFmpeg Audio Processing
