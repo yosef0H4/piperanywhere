@@ -118,7 +118,7 @@ Special thanks to:
 - **Most of the code** was generated and refined with AI assistance
 - **My contribution** was primarily project assembly, testing, and documentation
 
-This is a testament to the power of open-source collaboration and modern AI-assisted development. The real heroes are the original library authors and the open-source community.
+This is a testament to the power of open-source collaboration. The real heroes are the original library authors and the open-source community.
 
 ---
 
