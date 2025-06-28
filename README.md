@@ -92,9 +92,7 @@ This program is free software under GPL v3.0. You can redistribute and/or modify
 **Antivirus flags executable**: Use source code method instead of compiled .exe
 **Dependencies not found**: Check folder structure, use Dependencies menu in app
 **No voices found**: Download .onnx files to voices/ folder, click refresh button
-**OCR not working**: Hold X key while drawing rectangle, try CapsLock+Z for refresh
 **Navigation issues**: Ensure text is playing, release CapsLock after scrolling
-
 **System Requirements**: Windows 10/11 (64-bit), AutoHotkey v2, ~100MB disk space
 
 ## 🙏 Acknowledgments

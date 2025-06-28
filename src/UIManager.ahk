@@ -505,7 +505,7 @@ class UIManager {
     }
     
     OnShowAbout(*) {
-        aboutText := "🎙️ piperAnywhere v0.2`n" .
+        aboutText := "🎙️ piperAnywhere v0.3`n" .
                     "Text-to-Speech Annotation Tool`n`n" .
                     "Copyright (C) 2025 yousef abdullah`n" .
                     "Licensed under GPL v3.0`n`n" .
