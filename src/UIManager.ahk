@@ -263,7 +263,7 @@ class UIManager {
         this.controls.prevButton := this.gui.AddButton("x185 y308 w30 h24", "⏮")
         this.controls.prevButton.SetFont("s8 Bold")
         
-        this.controls.nextButton := this.gui.AddButton("x225 y308 w30 h24", "⏭")
+        this.controls.nextButton := this.gui.AddButton("x215 y308 w30 h24", "⏭")
         this.controls.nextButton.SetFont("s8 Bold")
         
         ; Sentence index selection
