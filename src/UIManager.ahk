@@ -276,7 +276,7 @@ class UIManager {
     
     CreateMenuItems() {
         this.fileMenu.Add(this.GetText("dependenciesMenu"), ObjBindMethod(this.app, "ShowDependencyInfo"))
-        this.fileMenu.Add(this.GetText("helpMenu"), ObjBindMethod(this, "OnHelp"))
+        this.fileMenu.Add(this.GetText("helpMenu"), ObjBindMethod(this, "OnShowHelp"))
         this.fileMenu.Add(this.GetText("aboutMenu"), ObjBindMethod(this, "OnShowAbout"))
         this.fileMenu.Add(this.GetText("exitMenu"), ObjBindMethod(this, "OnExit"))
     }
