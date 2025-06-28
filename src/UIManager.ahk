@@ -490,7 +490,6 @@ class UIManager {
     }
     
     OnExit(*) {
-        this.app.SaveSettings()
         this.ttsPlayer.Cleanup()
         ExitApp()
     }
@@ -535,21 +534,5 @@ class UIManager {
             return
         }
         this.controls.statusLabel.Text := this.GetText("maxWordsSet") . " " . this.audioSettings.maxWordsPerSentence
-    }
-    
-    LoadSettings() {
-        this.audioSettings.SetMinWords(IniRead(this.settingsFile, "Settings", "MinWords", 6))
-        this.audioSettings.SetMaxWords(IniRead(this.settingsFile, "Settings", "MaxWords", 25))
-        this.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
-        this.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
-    }
-    
-    SaveSettings() {
-        try {
-            IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
-            IniWrite(this.audioSettings.maxWordsPerSentence, this.settingsFile, "Settings", "MaxWords")
-        } catch as err {
-            ; Optional: MsgBox("Error saving settings: " . err.Message, "Save Error", "Iconx")
-        }
     }
 }
