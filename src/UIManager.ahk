@@ -35,7 +35,6 @@ class UIManager {
            "readyStatus", "Ready",
            "hintsText", "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+Z (Refresh OCR) • CapsLock+S (Stop)",
            "defaultText", "Enhanced Piper TTS with object-oriented design and improved maintainability.",
-           "saveAudioMenu", "💾 &Save Audio",
            "dependenciesMenu", "ℹ️ &Dependencies",
            "helpMenu", "❓ &Help",
            "aboutMenu", "ℹ️ &About",
@@ -91,7 +90,6 @@ class UIManager {
            "readyStatus", "جاهز",
            "hintsText", "💡 المفاتيح المختصرة: CapsLock+C (نسخ وتشغيل) • CapsLock+X (OCR وتشغيل) • CapsLock+Z (تحديث OCR) • CapsLock+S (إيقاف)",
            "defaultText", "محرك Piper TTS المحسن مع تصميم شيئي ومرونة محسنة في الصيانة.",
-           "saveAudioMenu", "💾 &حفظ الصوت",
            "dependenciesMenu", "ℹ️ &التبعيات",
            "helpMenu", "❓ &مساعدة",
            "aboutMenu", "ℹ️ &حول",
@@ -261,9 +259,8 @@ class UIManager {
     }
     
     CreateMenuItems() {
-        this.fileMenu.Add(this.GetText("saveAudioMenu"), ObjBindMethod(this, "OnSaveAudio"))
-        this.fileMenu.Add(this.GetText("dependenciesMenu"), ObjBindMethod(this, "OnShowDependencyInfo"))
-        this.fileMenu.Add(this.GetText("helpMenu"), ObjBindMethod(this, "OnShowHelp"))
+        this.fileMenu.Add(this.GetText("dependenciesMenu"), ObjBindMethod(this.app, "ShowDependencyInfo"))
+        this.fileMenu.Add(this.GetText("helpMenu"), ObjBindMethod(this, "OnHelp"))
         this.fileMenu.Add(this.GetText("aboutMenu"), ObjBindMethod(this, "OnShowAbout"))
         this.fileMenu.Add(this.GetText("exitMenu"), ObjBindMethod(this, "OnExit"))
     }

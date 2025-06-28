@@ -95,32 +95,6 @@ class AudioSettings {
         return command
     }
     
-    BuildSaveCommand(voiceFile, tempTextFile, outputFile) {
-        ; Build the piper command with dynamic path
-        piperCmd := 'type "' . tempTextFile . '" | "' . this.piperPath . '" --model ".\voices\' . voiceFile . '"'
-        piperCmd .= ' --length_scale ' . (1 / this.speechSpeed)
-        piperCmd .= ' --sentence_silence ' . this.sentenceSilence
-        piperCmd .= ' --output-raw'
-        
-        if (this.useAudioEnhancement) {
-            audioFilters := "dynaudnorm=p=0.9:s=5"
-            
-            if (this.volumeBoost != 0) {
-                audioFilters .= ",volume=" . this.volumeBoost . "dB"
-            }
-            
-            audioFilters .= ",compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0:-90:0.2"
-            
-            command := A_ComSpec . ' /c ' . piperCmd 
-            command .= ' | "' . this.ffmpegPath . '" -f s16le -ar 22050 -ch_layout mono -i - -af "' . audioFilters . '" "' . outputFile . '"'
-        } else {
-            command := A_ComSpec . ' /c ' . piperCmd
-            command .= ' | "' . this.ffmpegPath . '" -f s16le -ar 22050 -ch_layout mono -i - "' . outputFile . '"'
-        }
-        
-        return command
-    }
-    
     ; Get current executable paths for diagnostic purposes
     GetExecutablePaths() {
         return {

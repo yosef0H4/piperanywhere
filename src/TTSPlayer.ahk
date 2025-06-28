@@ -228,57 +228,6 @@ class TTSPlayer {
         return combinedSentences
     }
     
-    SaveAudio(textBox, voiceDropdown, statusLabel) {
-        textToSpeak := textBox.Text
-        
-        if (textToSpeak = "") {
-            MsgBox("Please enter some text to save as audio.", "No Text", "Iconx")
-            statusLabel.Text := "❌ No text to save"
-            return false
-        }
-        
-        voice := this.voiceManager.GetSelectedVoice(voiceDropdown)
-        if (!voice.valid) {
-            MsgBox("Please select a valid voice from the dropdown.", "Invalid Voice", "Iconx")
-            statusLabel.Text := "❌ Invalid voice"
-            return false
-        }
-        
-        saveFile := FileSelect("S", "piper_audio.wav", "Save Audio File", "Wave Files (*.wav)")
-        if (saveFile = "") {
-            return false
-        }
-        
-        this.CleanupTempFiles()
-        
-        this.tempTextFile := A_Temp . "\piper_text_" . A_TickCount . ".txt"
-        
-        try {
-            FileAppend(textToSpeak, this.tempTextFile, "UTF-8")
-        } catch as e {
-            MsgBox("Failed to create temporary file: " . e.Message, "File Error", "Iconx")
-            statusLabel.Text := "❌ File error"
-            return false
-        }
-        
-        command := this.audioSettings.BuildSaveCommand(voice.file, this.tempTextFile, saveFile)
-        
-        statusLabel.Text := "💾 Saving audio file..."
-        
-        try {
-            RunWait(command, , "Hide")
-            statusLabel.Text := "✅ Audio saved: " . saveFile
-            MsgBox("Audio saved successfully!", "Save Complete", "Iconi")
-            this.CleanupTempFiles()
-            return true
-        } catch as e {
-            MsgBox("Failed to save audio: " . e.Message, "Save Error", "Iconx")
-            statusLabel.Text := "❌ Failed to save"
-            this.CleanupTempFiles()
-            return false
-        }
-    }
-    
     StopPlayback(statusLabel, playButton, stopButton) {
         ; Reset pause state when stop is pressed
         this.isPaused := false
