@@ -35,6 +35,11 @@ class TTSPlayer {
             this.StopPlayback(statusLabel, playButton, stopButton)
         }
         
+        ; Clean the text if cleaning is enabled
+        if (piperApp.GetTextCleaning()) {
+            textToSpeak := this.CleanTextForTTS(textToSpeak)
+        }
+        
         this.CleanupTempFiles()
         
         ; Split text into sentences
@@ -530,5 +535,20 @@ class TTSPlayer {
         
         ; Update status
         statusLabel.Text := "📍 Jumped to sentence " . this.currentSentenceIndex . " of " . this.sentences.Length . " (Paused)"
+    }
+    
+    CleanTextForTTS(text) {
+        ; Remove any character that is not a letter, number, punctuation, or separator/whitespace
+        ; This approach is language-agnostic and effectively removes emojis, decorative symbols, etc.
+        cleanedText := RegExReplace(text, "[^\p{L}\p{N}\p{P}\p{Z}]", "")
+        
+        ; Clean up multiple spaces/newlines that might result from removals
+        cleanedText := RegExReplace(cleanedText, "\s+", " ")
+        cleanedText := RegExReplace(cleanedText, "^\s+|\s+$", "") ; Trim start/end
+        
+        ; Clean up multiple punctuation marks (keep max 3 for emphasis)
+        cleanedText := RegExReplace(cleanedText, "([.!?]){4,}", "$1$1$1")
+        
+        return cleanedText
     }
 } 

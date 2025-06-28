@@ -67,7 +67,11 @@ class UIManager {
            "invalidMaxWords", "❌ Invalid max words: Not a number",
            "maxWordsSet", "Max words set to",
            "sentenceIndexLabel", "Sentence:",
-           "sentenceIndexInput", "Sentence index"
+           "sentenceIndexInput", "Sentence index",
+           "cleanTextCheckbox", "🧹 Clean Text",
+           "textCleaningEnabled", "Text cleaning enabled",
+           "textCleaningDisabled", "Text cleaning disabled",
+           "cleaningText", "Cleaning text..."
        )
        
        this.arabicMap := Map(
@@ -124,7 +128,11 @@ class UIManager {
            "invalidMaxWords", "❌ أعلى كلمات غير صحيح: ليس رقماً",
            "maxWordsSet", "تم تعيين أعلى كلمات إلى",
            "sentenceIndexLabel", "الجملة:",
-           "sentenceIndexInput", "فهرس الجملة"
+           "sentenceIndexInput", "فهرس الجملة",
+           "cleanTextCheckbox", "🧹 تنظيف النص",
+           "textCleaningEnabled", "تم تفعيل تنظيف النص",
+           "textCleaningDisabled", "تم إلغاء تنظيف النص",
+           "cleaningText", "تنظيف النص..."
        )
     }
     
@@ -198,6 +206,10 @@ class UIManager {
         ; Enhancement toggle
         this.controls.enhancementCheckbox := this.gui.AddCheckbox("x16 y142 w90 h16 Checked", this.GetText("enhancedCheckbox"))
         this.controls.enhancementCheckbox.SetFont("s8")
+        
+        ; Text cleaning toggle
+        this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x110 y142 w90 h16", this.GetText("cleanTextCheckbox"))
+        this.controls.cleanTextCheckbox.SetFont("s8")
         
         ; Speed control
         this.controls.speedLabel := this.gui.AddText("x16 y162 w25", this.GetText("speedLabel"))
@@ -286,6 +298,7 @@ class UIManager {
         this.controls.refreshButton.OnEvent("Click", ObjBindMethod(this, "OnRefreshVoices"))
         this.controls.voicesButton.OnEvent("Click", ObjBindMethod(this, "OnOpenVoicesFolder"))
         this.controls.enhancementCheckbox.OnEvent("Click", ObjBindMethod(this, "OnEnhancementToggled"))
+        this.controls.cleanTextCheckbox.OnEvent("Click", ObjBindMethod(this, "OnCleanTextToggled"))
         this.controls.speedSlider.OnEvent("Change", ObjBindMethod(this, "OnSpeedChanged"))
         this.controls.speedInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnSpeedInputChanged"))
         this.controls.volumeSlider.OnEvent("Change", ObjBindMethod(this, "OnVolumeChanged"))
@@ -327,6 +340,9 @@ class UIManager {
         
         ; Update checkbox
         this.controls.enhancementCheckbox.Text := this.GetText("enhancedCheckbox")
+        
+        ; Update clean text checkbox
+        this.controls.cleanTextCheckbox.Text := this.GetText("cleanTextCheckbox")
         
         ; Update labels
         this.controls.speedLabel.Text := this.GetText("speedLabel")
@@ -377,6 +393,12 @@ class UIManager {
         this.UpdateQualityInfo()
         this.controls.statusLabel.Text := this.audioSettings.useAudioEnhancement ? 
                                         this.GetText("audioEnhancementEnabled") : this.GetText("audioEnhancementDisabled")
+    }
+    
+    OnCleanTextToggled(*) {
+        this.app.SetTextCleaning(this.controls.cleanTextCheckbox.Value)
+        this.controls.statusLabel.Text := this.app.GetTextCleaning() ? 
+                                        this.GetText("textCleaningEnabled") : this.GetText("textCleaningDisabled")
     }
     
     OnSpeedChanged(*) {

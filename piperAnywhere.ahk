@@ -33,6 +33,7 @@ class PiperTTSApp {
         ; Initialize all components
         this.audioSettings := AudioSettings()
         
+        this.textCleaning := false
         ; Update audio settings with correct executable paths
         this.UpdateAudioSettingsPaths()
         
@@ -105,6 +106,14 @@ class PiperTTSApp {
         MsgBox(summary, "Dependency Information", "Iconi")
     }
     
+    SetTextCleaning(enabled) {
+        this.textCleaning := enabled
+    }
+    
+    GetTextCleaning() {
+        return this.textCleaning
+    }
+    
     SaveSettings() {
         try {
             IniWrite(this.uiManager.controls.voiceDropdown.Value, this.settingsFile, "Settings", "VoiceIndex")
@@ -115,6 +124,7 @@ class PiperTTSApp {
             IniWrite(this.uiManager.controls.languageDropdown.Value, this.settingsFile, "Settings", "LanguageIndex")
             IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
             IniWrite(this.audioSettings.maxWordsPerSentence, this.settingsFile, "Settings", "MaxWords")
+            IniWrite(this.textCleaning, this.settingsFile, "Settings", "TextCleaning")
         } catch as err {
             ; Optional: MsgBox("Error saving settings: " . err.Message, "Save Error", "Iconx")
         }
@@ -131,6 +141,7 @@ class PiperTTSApp {
             languageIndex := IniRead(this.settingsFile, "Settings", "LanguageIndex", 1)
             minWords := IniRead(this.settingsFile, "Settings", "MinWords", 6)
             maxWords := IniRead(this.settingsFile, "Settings", "MaxWords", 25)
+            textCleaning := IniRead(this.settingsFile, "Settings", "TextCleaning", false)
 
             ; Apply settings
             this.uiManager.controls.textBox.Text := lastText
@@ -150,6 +161,7 @@ class PiperTTSApp {
             this.uiManager.UpdateAllTexts()
             this.audioSettings.SetMinWords(minWords)
             this.audioSettings.SetMaxWords(maxWords)
+            this.SetTextCleaning(textCleaning)
 
             ; Update UI controls to reflect loaded settings
             this.uiManager.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
@@ -159,6 +171,7 @@ class PiperTTSApp {
             this.uiManager.controls.enhancementCheckbox.Value := this.audioSettings.useAudioEnhancement
             this.uiManager.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
             this.uiManager.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
+            this.uiManager.controls.cleanTextCheckbox.Value := this.textCleaning
         
     }
 }
