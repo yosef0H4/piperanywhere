@@ -40,6 +40,7 @@ class UIManager {
            "helpMenu", "❓ &Help",
            "aboutMenu", "ℹ️ &About",
            "exitMenu", "✖️ &Exit",
+           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n🔧 Audio Settings:`n• Enhanced: Better quality with filters`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
            "voiceRefreshed", "Voice list refreshed",
            "voicesFolderOpened", "Opened voices folder",
            "voicesFolderNotFound", "Voices folder not found!",
@@ -95,6 +96,7 @@ class UIManager {
            "helpMenu", "❓ &مساعدة",
            "aboutMenu", "ℹ️ &حول",
            "exitMenu", "✖️ &خروج",
+           "helpText", "🎙️ مساعدة Piper TTS`n`n📝 الاستخدام الأساسي:`n1. اختر صوتًا من القائمة المنسدلة`n2. أدخل النص للقراءة`n3. انقر فوق تشغيل أو استخدم مفاتيح الاختصار`n`n⌨️ مفاتيح الاختصار:`n• CapsLock + C: نسخ النص المحدد وتشغيله`n• CapsLock + X: OCR لمنطقة الشاشة وتشغيلها`n• CapsLock + Z: تحديث OCR من آخر منطقة محفوظة`n• CapsLock + S: إيقاف التشغيل`n• CapsLock + A: تبديل إيقاف التشغيل مؤقتًا`n• CapsLock + Scroll Down: الانتقال إلى الجملة السابقة`n• CapsLock + Scroll Up: الانتقال إلى الجملة التالية`n`n🔧 إعدادات الصوت:`n• محسن: جودة أفضل مع الفلاتر`n• السرعة: سرعة التشغيل من 0.5x إلى 2.0x`n• مستوى الصوت: تعزيز من -10dB إلى +20dB`n`n📁 الملفات:`n• الأصوات: ضع ملفات .onnx في مجلد الأصوات`n• التبعيات: يلزم وجود FFmpeg و Piper`n`nℹ️ انقر فوق 'التبعيات' للتحقق من حالة التثبيت.",
            "voiceRefreshed", "تم تحديث قائمة الأصوات",
            "voicesFolderOpened", "تم فتح مجلد الأصوات",
            "voicesFolderNotFound", "لم يتم العثور على مجلد الأصوات!",
@@ -463,29 +465,7 @@ class UIManager {
     }
     
     OnShowHelp(*) {
-        helpText := "🎙️ Piper TTS Help`n`n"
-        helpText .= "📝 Basic Usage:`n"
-        helpText .= "1. Select a voice from the dropdown`n"
-        helpText .= "2. Enter text to speak`n"
-        helpText .= "3. Click Play or use hotkeys`n`n"
-        helpText .= "⌨️ Hotkeys:`n"
-        helpText .= "• CapsLock + C: Copy selected text and play`n"
-        helpText .= "• CapsLock + X: OCR screen area and play`n"
-        helpText .= "• CapsLock + Z: Refresh OCR from last saved area`n"
-        helpText .= "• CapsLock + S: Stop playback`n"
-        helpText .= "• CapsLock + A: Toggle pause playback`n"
-        helpText .= "• CapsLock + Scroll Down: Go to previous sentence`n"
-        helpText .= "• CapsLock + Scroll Up: Go to next sentence`n`n"
-        helpText .= "🔧 Audio Settings:`n"
-        helpText .= "• Enhanced: Better quality with filters`n"
-        helpText .= "• Speed: 0.5x to 2.0x playback speed`n"
-        helpText .= "• Volume: -10dB to +20dB boost`n`n"
-        helpText .= "📁 Files:`n"
-        helpText .= "• Voices: Place .onnx files in voices folder`n"
-        helpText .= "• Dependencies: FFmpeg and Piper required`n`n"
-        helpText .= "ℹ️ Click 'Dependencies' to check installation status."
-        
-        MsgBox(helpText, "Help - Piper TTS", "Iconi")
+        MsgBox(this.GetText("helpText"), "Help - Piper TTS", "Iconi")
     }
     
     OnShowAbout(*) {
