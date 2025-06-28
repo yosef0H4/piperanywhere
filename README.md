@@ -16,7 +16,7 @@ High-quality text-to-speech with global hotkeys, OCR integration, and smart play
 - **⌨️ Global Hotkeys**: Read text anywhere with CapsLock combinations
 - **🔍 Smart OCR**: Select screen areas and have text read aloud instantly
 - **⏸️ Sentence Navigation**: Pause/resume at any sentence, navigate with scroll wheel
-- **🎛️ Audio Controls**: Speed (0.5x-2.0x), volume boost, audio enhancement
+- **🎛️ Audio Controls**: Speed (0.5x-2.0x), volume boost
 - **🌐 Multi-Language**: English/Arabic interface, supports all Piper voice models
 - **🧹 Text Processing**: Optional cleaning, smart sentence splitting
 
@@ -68,8 +68,7 @@ Download `piperAnywhereWizard.exe` from releases. May trigger antivirus false po
 - **Quick refresh**: Re-scan same area without redrawing
 - **Visual confirmation**: Highlights show OCR operations
 
-### Audio Enhancement
-- **Professional processing**: Dynamic normalization, compression, volume control
+### Text cleaning
 - **Text cleaning**: Remove emojis and decorative characters
 - **Sentence management**: Configurable word limits for optimal pacing
 
