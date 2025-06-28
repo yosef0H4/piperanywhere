@@ -17,6 +17,9 @@ class HotkeyManager {
         ; OCR and play hotkey
         HotKey("CapsLock & x", ObjBindMethod(this, "OnOCRAndPlayHotkey"))
         
+        ; Refresh OCR hotkey (same area as last OCR)
+        HotKey("CapsLock & z", ObjBindMethod(this, "OnRefreshOCRHotkey"))
+        
         ; Toggle pause hotkey
         HotKey("CapsLock & a", ObjBindMethod(this, "OnTogglePauseHotkey"))
         
@@ -61,6 +64,14 @@ class HotkeyManager {
     OnOCRAndPlayHotkey(*) {
         textBox := this.uiManager.GetTextBox()
         if (this.ocrHandler.StartOCR(textBox)) {
+            this.uiManager.OnPlayText()
+        }
+        this.uiManager.controls.pauseButton.Enabled := true
+    }
+    
+    OnRefreshOCRHotkey(*) {
+        textBox := this.uiManager.GetTextBox()
+        if (this.ocrHandler.RefreshOCR(textBox)) {
             this.uiManager.OnPlayText()
         }
         this.uiManager.controls.pauseButton.Enabled := true

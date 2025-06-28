@@ -160,6 +160,8 @@ class OCRHandler {
     
     __New() {
         this.box := Rectangle_creator()
+        ; Store last OCR coordinates for refresh functionality
+        this.lastOCRCoords := {x: 0, y: 0, w: 0, h: 0, hasCoords: false}
     }
     
     StartOCR(textBox) {
@@ -186,6 +188,46 @@ class OCRHandler {
         }
         
         ToolTip()
+        Highlighter.Highlight()
+        
+        ; Save the coordinates if OCR was successful
+        if (textBox.Text != "") {
+            this.lastOCRCoords.x := this.box.rectangle[1]
+            this.lastOCRCoords.y := this.box.rectangle[2] 
+            this.lastOCRCoords.w := this.box.rectangle[3]
+            this.lastOCRCoords.h := this.box.rectangle[4]
+            this.lastOCRCoords.hasCoords := true
+        }
+        
+        return textBox.Text != ""
+    }
+    
+    RefreshOCR(textBox) {
+        ; Check if we have saved coordinates
+        if (!this.lastOCRCoords.hasCoords) {
+            MsgBox("No previous OCR area saved. Please use CapsLock+X first to define an area.", "No Saved Area", "Iconx")
+            return false
+        }
+        
+        ; Show the saved rectangle briefly to indicate the refresh area
+        
+        
+        ; Perform OCR on the saved area
+        capturedResult := OCR.FromRect(this.lastOCRCoords.x, this.lastOCRCoords.y, 
+                                     this.lastOCRCoords.w, this.lastOCRCoords.h)
+        
+        textBox.Text := capturedResult.Text
+        tooltipText := capturedResult.Text
+        if (StrLen(capturedResult.Text) > 50) {
+            tooltipText := "..." . SubStr(capturedResult.Text, -50)
+        }
+        
+        Highlighter.Highlight(this.lastOCRCoords.x, this.lastOCRCoords.y, 
+            this.lastOCRCoords.w, this.lastOCRCoords.h, 0, "Blue", 3)
+        Sleep(100)
+        Highlighter.Highlight(this.lastOCRCoords.x, this.lastOCRCoords.y, 
+            this.lastOCRCoords.w, this.lastOCRCoords.h, 0, "Red", 3)
+        
         Highlighter.Highlight()
         
         return textBox.Text != ""

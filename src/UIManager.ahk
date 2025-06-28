@@ -33,7 +33,7 @@ class UIManager {
            "loudLabel", "Loud",
            "dbLabel", "dB",
            "readyStatus", "Ready",
-           "hintsText", "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+S (Stop)",
+           "hintsText", "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+Z (Refresh OCR) • CapsLock+S (Stop)",
            "defaultText", "Enhanced Piper TTS with object-oriented design and improved maintainability.",
            "saveAudioMenu", "💾 &Save Audio",
            "dependenciesMenu", "ℹ️ &Dependencies",
@@ -88,7 +88,7 @@ class UIManager {
            "loudLabel", "عالي",
            "dbLabel", "ديسيبل",
            "readyStatus", "جاهز",
-           "hintsText", "💡 المفاتيح المختصرة: CapsLock+C (نسخ وتشغيل) • CapsLock+X (OCR وتشغيل) • CapsLock+S (إيقاف)",
+           "hintsText", "💡 المفاتيح المختصرة: CapsLock+C (نسخ وتشغيل) • CapsLock+X (OCR وتشغيل) • CapsLock+Z (تحديث OCR) • CapsLock+S (إيقاف)",
            "defaultText", "محرك Piper TTS المحسن مع تصميم شيئي ومرونة محسنة في الصيانة.",
            "saveAudioMenu", "💾 &حفظ الصوت",
            "dependenciesMenu", "ℹ️ &التبعيات",
@@ -471,6 +471,7 @@ class UIManager {
         helpText .= "⌨️ Hotkeys:`n"
         helpText .= "• CapsLock + C: Copy selected text and play`n"
         helpText .= "• CapsLock + X: OCR screen area and play`n"
+        helpText .= "• CapsLock + Z: Refresh OCR from last saved area`n"
         helpText .= "• CapsLock + S: Stop playback`n"
         helpText .= "• CapsLock + A: Toggle pause playback`n"
         helpText .= "• CapsLock + Scroll Down: Go to previous sentence`n"
