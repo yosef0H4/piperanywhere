@@ -4,6 +4,10 @@
 
 High-quality text-to-speech with global hotkeys, OCR integration, and smart playback controls. Run from source code to avoid antivirus false positives.
 
+## 👥 Who This Is For
+✅ Perfect for: People with dyslexia/ADHD, vision strain, language learners, efficiency seekers, and anyone needing selective text-to-speech assistance.
+❌ Not for: Blind users (use dedicated screen readers), enterprise/commercial use (GPL v3.0 restrictions).
+
 > **💡 Recommended**: Run from source code rather than compiled executables to avoid antivirus issues.
 
 ## ✨ Key Features
