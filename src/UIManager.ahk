@@ -65,7 +65,9 @@ class UIManager {
            "invalidMinWords", "❌ Invalid min words: Not a number",
            "minWordsSet", "Min words set to",
            "invalidMaxWords", "❌ Invalid max words: Not a number",
-           "maxWordsSet", "Max words set to"
+           "maxWordsSet", "Max words set to",
+           "sentenceIndexLabel", "Sentence:",
+           "sentenceIndexInput", "Sentence index"
        )
        
        this.arabicMap := Map(
@@ -120,7 +122,9 @@ class UIManager {
            "invalidMinWords", "❌ أدنى كلمات غير صحيح: ليس رقماً",
            "minWordsSet", "تم تعيين أدنى كلمات إلى",
            "invalidMaxWords", "❌ أعلى كلمات غير صحيح: ليس رقماً",
-           "maxWordsSet", "تم تعيين أعلى كلمات إلى"
+           "maxWordsSet", "تم تعيين أعلى كلمات إلى",
+           "sentenceIndexLabel", "الجملة:",
+           "sentenceIndexInput", "فهرس الجملة"
        )
     }
     
@@ -230,35 +234,42 @@ class UIManager {
     }
     
     CreateControlButtons() {
-        this.controls.buttonGroup := this.gui.AddGroupBox("x8 y290 w280 h60", this.GetText("controlsGroup"))
+        this.controls.buttonGroup := this.gui.AddGroupBox("x8 y290 w280 h80", this.GetText("controlsGroup"))
         this.controls.buttonGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Control buttons
-       this.controls.playButton := this.gui.AddButton("x16 y308 w50 h24 Default", this.GetText("playButton"))
+        this.controls.playButton := this.gui.AddButton("x16 y308 w50 h24 Default", this.GetText("playButton"))
         this.controls.playButton.SetFont("s8 Bold")
         
-        this.controls.pauseButton := this.gui.AddButton("x70 y308 w60 h24 Disabled", this.GetText("pauseButton"))
+        this.controls.pauseButton := this.gui.AddButton("x70 y308 w60 h24", this.GetText("pauseButton"))
         this.controls.pauseButton.SetFont("s8 Bold")
         
-        this.controls.stopButton := this.gui.AddButton("x135 y308 w50 h24 Disabled", this.GetText("stopButton"))
+        this.controls.stopButton := this.gui.AddButton("x135 y308 w50 h24", this.GetText("stopButton"))
         this.controls.stopButton.SetFont("s8 Bold")
         
         ; Navigation buttons  
-        this.controls.prevButton := this.gui.AddButton("x190 y308 w30 h24 Disabled", "⏮")
+        this.controls.prevButton := this.gui.AddButton("x185 y308 w30 h24", "⏮")
         this.controls.prevButton.SetFont("s8 Bold")
         
-        this.controls.nextButton := this.gui.AddButton("x225 y308 w30 h24 Disabled", "⏭")
+        this.controls.nextButton := this.gui.AddButton("x225 y308 w30 h24", "⏭")
         this.controls.nextButton.SetFont("s8 Bold")
+        
+        ; Sentence index selection
+        this.controls.sentenceIndexLabel := this.gui.AddText("x16 y338 w50 h16", this.GetText("sentenceIndexLabel"))
+        this.controls.sentenceIndexLabel.SetFont("s8")
+        
+        this.controls.sentenceIndexInput := this.gui.AddEdit("x70 y336 w40 h20", "1")
+        this.controls.sentenceIndexInput.SetFont("s8 Bold")
     }
     
     CreateStatusSection() {
-        this.controls.statusLabel := this.gui.AddText("x8 y334 w320 h16 Center", this.GetText("readyStatus"))
+        this.controls.statusLabel := this.gui.AddText("x8 y354 w320 h16 Center", this.GetText("readyStatus"))
         this.controls.statusLabel.SetFont("s8", "Segoe UI")
         
-        this.controls.qualityLabel := this.gui.AddText("x8 y350 w320 h16 Center", "")
+        this.controls.qualityLabel := this.gui.AddText("x8 y370 w320 h16 Center", "")
         this.controls.qualityLabel.SetFont("s7", "Segoe UI")
         
-        this.controls.hintLabel := this.gui.AddText("x8 y366 w320 h32 Center", 
+        this.controls.hintLabel := this.gui.AddText("x8 y386 w320 h32 Center", 
                                               this.GetText("hintsText"))
         this.controls.hintLabel.SetFont("s7", "Segoe UI")
     }
@@ -286,6 +297,7 @@ class UIManager {
         this.controls.maxWordsInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnMaxWordsInputChanged"))
         this.controls.prevButton.OnEvent("Click", ObjBindMethod(this, "OnPreviousSentence"))
         this.controls.nextButton.OnEvent("Click", ObjBindMethod(this, "OnNextSentence"))
+        this.controls.sentenceIndexInput.OnEvent("Change", ObjBindMethod(this, "OnSentenceIndexChanged"))
         
         ; GUI close event
         this.gui.OnEvent("Close", ObjBindMethod(this, "OnExit"))
@@ -343,6 +355,8 @@ class UIManager {
         ; Update word count labels
         this.controls.minWordsLabel.Text := this.GetText("minWordsLabel")
         this.controls.maxWordsLabel.Text := this.GetText("maxWordsLabel")
+        
+        this.controls.sentenceIndexLabel.Text := this.GetText("sentenceIndexLabel")
     }
     
     OnRefreshVoices(*) {
@@ -423,18 +437,10 @@ class UIManager {
         
         this.ttsPlayer.PlayText(this.controls.textBox, this.controls.voiceDropdown, 
                                this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
-        
-        ; Enable pause button when playback starts
-        this.controls.pauseButton.Enabled := true
-        this.controls.prevButton.Enabled := true
-        this.controls.nextButton.Enabled := true
     }
     
     OnStopPlayback(*) {
         this.ttsPlayer.StopPlayback(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
-        this.controls.pauseButton.Enabled := false
-        this.controls.prevButton.Enabled := false
-        this.controls.nextButton.Enabled := false
     }
     
     OnPausePlayback(*) {
@@ -507,7 +513,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w336 h418")
+        this.gui.Show("w336 h438")
     }
     
     GetTextBox() {
@@ -552,5 +558,18 @@ class UIManager {
     OnNextSentence(*) {
         ; Call the same method used by the scroll wheel hotkey  
         this.ttsPlayer.GoToNextSentence(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
+    }
+    
+    OnSentenceIndexChanged(*) {
+        ; Auto-pause when user interacts with sentence index input
+        if (this.ttsPlayer.isPlayingSentences && !this.ttsPlayer.isPaused) {
+            this.ttsPlayer.PausePlayback(this.controls.statusLabel, this.controls.playButton, this.controls.pauseButton, this.controls.stopButton)
+        }
+        
+        ; Jump to specified sentence index
+        indexInput := this.controls.sentenceIndexInput.Text
+        if (IsNumber(indexInput) && indexInput > 0) {
+            this.ttsPlayer.GoToSentenceIndex(indexInput, this.controls.statusLabel)
+        }
     }
 }

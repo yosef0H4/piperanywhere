@@ -295,13 +295,8 @@ class TTSPlayer {
         this.currentProcessPID := 0
         ToolTip()
         
-        if (IsSet(playButton)) {
-            playButton.Enabled := true
+        if (IsSet(playButton))
             playButton.Text := "▶ Play"
-        }
-        if (IsSet(stopButton)) {
-            stopButton.Enabled := false
-        }
         
         ; Reset pause button if it exists
         this.ResetPauseButton()
@@ -365,8 +360,6 @@ class TTSPlayer {
             ; Resume playback
             this.isPaused := false
             pauseButton.Text := "⏸ Pause"
-            playButton.Enabled := false
-            stopButton.Enabled := true
             statusLabel.Text := "🎵 Resuming playback..."
             
             ; Get voice and continue from paused sentence
@@ -383,8 +376,6 @@ class TTSPlayer {
             this.isPaused := true
             this.pausedSentenceIndex := this.currentSentenceIndex
             pauseButton.Text := "▶ Resume"
-            playButton.Enabled := true
-            stopButton.Enabled := true
             statusLabel.Text := "⏸ Paused at sentence " . this.currentSentenceIndex . " of " . this.sentences.Length
             this.StopCurrentProcess()
         }
@@ -520,5 +511,24 @@ class TTSPlayer {
         
         ; Start the tooltip timer to follow the cursor during navigation
         SetTimer(this.tooltipTimer, 50)
+    }
+    
+    GoToSentenceIndex(index, statusLabel) {
+        ; Only allow navigation during sentence playback
+        if (!this.isPlayingSentences || this.sentences.Length = 0) {
+            return
+        }
+        
+        ; Validate index bounds
+        if (index < 1 || index > this.sentences.Length) {
+            statusLabel.Text := "❌ Invalid sentence index: " . index . " (valid range: 1-" . this.sentences.Length . ")"
+            return
+        }
+        
+        ; Set the current sentence index
+        this.currentSentenceIndex := index
+        
+        ; Update status
+        statusLabel.Text := "📍 Jumped to sentence " . this.currentSentenceIndex . " of " . this.sentences.Length . " (Paused)"
     }
 } 
