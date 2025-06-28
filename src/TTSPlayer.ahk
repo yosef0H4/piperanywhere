@@ -460,4 +460,66 @@ class TTSPlayer {
             ; Ignore if UI not available
         }
     }
+    
+    GoToPreviousSentence(statusLabel, playButton, stopButton) {
+        ; Only allow navigation during sentence playback
+        if (!this.isPlayingSentences || this.sentences.Length = 0) {
+            return
+        }
+        
+        ; Stop current process first
+        this.StopCurrentProcess()
+        
+        ; Move to previous sentence with bounds checking
+        if (this.currentSentenceIndex > 1) {
+            this.currentSentenceIndex--
+        } else {
+            ; If at first sentence, go to last sentence (wrap around)
+            this.currentSentenceIndex := this.sentences.Length
+        }
+        
+        ; Update status and continue playback
+        statusLabel.Text := "⏮ Previous sentence (" . this.currentSentenceIndex . "/" . this.sentences.Length . ")"
+        
+        ; Get voice and play the selected sentence
+        try {
+            voice := piperApp.voiceManager.GetSelectedVoice(piperApp.uiManager.controls.voiceDropdown)
+            if (voice.valid) {
+                this.PlayNextSentence(voice, statusLabel, playButton, stopButton)
+            }
+        } catch {
+            this.FinishSentencePlayback(statusLabel, playButton, stopButton)
+        }
+    }
+    
+    GoToNextSentence(statusLabel, playButton, stopButton) {
+        ; Only allow navigation during sentence playback
+        if (!this.isPlayingSentences || this.sentences.Length = 0) {
+            return
+        }
+        
+        ; Stop current process first
+        this.StopCurrentProcess()
+        
+        ; Move to next sentence with bounds checking
+        if (this.currentSentenceIndex < this.sentences.Length) {
+            this.currentSentenceIndex++
+        } else {
+            ; If at last sentence, go to first sentence (wrap around)
+            this.currentSentenceIndex := 1
+        }
+        
+        ; Update status and continue playback
+        statusLabel.Text := "⏭ Next sentence (" . this.currentSentenceIndex . "/" . this.sentences.Length . ")"
+        
+        ; Get voice and play the selected sentence
+        try {
+            voice := piperApp.voiceManager.GetSelectedVoice(piperApp.uiManager.controls.voiceDropdown)
+            if (voice.valid) {
+                this.PlayNextSentence(voice, statusLabel, playButton, stopButton)
+            }
+        } catch {
+            this.FinishSentencePlayback(statusLabel, playButton, stopButton)
+        }
+    }
 } 

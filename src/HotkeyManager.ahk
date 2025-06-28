@@ -19,6 +19,12 @@ class HotkeyManager {
         
         ; Toggle pause hotkey
         HotKey("CapsLock & a", ObjBindMethod(this, "OnTogglePauseHotkey"))
+        
+        ; Sentence navigation hotkeys
+        HotKey("CapsLock & WheelDown", ObjBindMethod(this, "OnPreviousSentenceHotkey"))
+        
+        ; Next sentence hotkey
+        HotKey("CapsLock & WheelUp", ObjBindMethod(this, "OnNextSentenceHotkey"))
     }
     
     OnStopHotkey(*) {
@@ -62,5 +68,13 @@ class HotkeyManager {
     
     OnTogglePauseHotkey(*) {
         this.uiManager.OnPausePlayback()
+    }
+    
+    OnPreviousSentenceHotkey(*) {
+        this.ttsPlayer.GoToPreviousSentence(this.uiManager.controls.statusLabel, this.uiManager.controls.playButton, this.uiManager.controls.stopButton)
+    }
+    
+    OnNextSentenceHotkey(*) {
+        this.ttsPlayer.GoToNextSentence(this.uiManager.controls.statusLabel, this.uiManager.controls.playButton, this.uiManager.controls.stopButton)
     }
 } 
