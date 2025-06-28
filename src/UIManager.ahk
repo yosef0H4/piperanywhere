@@ -208,7 +208,7 @@ class UIManager {
         this.controls.enhancementCheckbox.SetFont("s8")
         
         ; Text cleaning toggle
-        this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x110 y142 w90 h16", this.GetText("cleanTextCheckbox"))
+        this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x110 y142 w100 h16", this.GetText("cleanTextCheckbox"))
         this.controls.cleanTextCheckbox.SetFont("s8")
         
         ; Speed control
@@ -526,6 +526,7 @@ class UIManager {
     }
     
     OnExit(*) {
+        this.app.SaveSettings()
         this.ttsPlayer.Cleanup()
         ExitApp()
     }

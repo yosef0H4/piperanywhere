@@ -115,7 +115,7 @@ class PiperTTSApp {
     }
     
     SaveSettings() {
-        try {
+        
             IniWrite(this.uiManager.controls.voiceDropdown.Value, this.settingsFile, "Settings", "VoiceIndex")
             IniWrite(this.audioSettings.speechSpeed, this.settingsFile, "Settings", "SpeechSpeed")
             IniWrite(this.audioSettings.volumeBoost, this.settingsFile, "Settings", "Volume")
@@ -125,9 +125,7 @@ class PiperTTSApp {
             IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
             IniWrite(this.audioSettings.maxWordsPerSentence, this.settingsFile, "Settings", "MaxWords")
             IniWrite(this.textCleaning, this.settingsFile, "Settings", "TextCleaning")
-        } catch as err {
-            ; Optional: MsgBox("Error saving settings: " . err.Message, "Save Error", "Iconx")
-        }
+        
     }
 
     LoadSettings() {
