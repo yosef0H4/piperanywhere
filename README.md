@@ -2,7 +2,7 @@
 
 **Advanced text-to-speech tool that reads text anywhere on your screen**
 
-High-quality text-to-speech with global hotkeys, OCR integration, and smart playback controls. Run from source code to avoid antivirus false positives.
+High-quality text-to-speech with global hotkeys, OCR integration, and smart playback controls.
 
 ## 👥 Who This Is For
 ✅ Perfect for: People with dyslexia/ADHD, vision strain, language learners, efficiency seekers, and anyone needing selective text-to-speech assistance.
