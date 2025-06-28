@@ -243,17 +243,22 @@ class UIManager {
         this.controls.stopButton := this.gui.AddButton("x135 y308 w50 h24 Disabled", this.GetText("stopButton"))
         this.controls.stopButton.SetFont("s8 Bold")
         
+        ; Navigation buttons  
+        this.controls.prevButton := this.gui.AddButton("x190 y308 w30 h24 Disabled", "⏮")
+        this.controls.prevButton.SetFont("s8 Bold")
         
+        this.controls.nextButton := this.gui.AddButton("x225 y308 w30 h24 Disabled", "⏭")
+        this.controls.nextButton.SetFont("s8 Bold")
     }
     
     CreateStatusSection() {
-        this.controls.statusLabel := this.gui.AddText("x8 y334 w280 h16 Center", this.GetText("readyStatus"))
+        this.controls.statusLabel := this.gui.AddText("x8 y334 w320 h16 Center", this.GetText("readyStatus"))
         this.controls.statusLabel.SetFont("s8", "Segoe UI")
         
-        this.controls.qualityLabel := this.gui.AddText("x8 y350 w280 h16 Center", "")
+        this.controls.qualityLabel := this.gui.AddText("x8 y350 w320 h16 Center", "")
         this.controls.qualityLabel.SetFont("s7", "Segoe UI")
         
-        this.controls.hintLabel := this.gui.AddText("x8 y366 w280 h32 Center", 
+        this.controls.hintLabel := this.gui.AddText("x8 y366 w320 h32 Center", 
                                               this.GetText("hintsText"))
         this.controls.hintLabel.SetFont("s7", "Segoe UI")
     }
@@ -279,6 +284,8 @@ class UIManager {
         this.controls.pauseButton.OnEvent("Click", ObjBindMethod(this, "OnPausePlayback"))
         this.controls.minWordsInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnMinWordsInputChanged"))
         this.controls.maxWordsInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnMaxWordsInputChanged"))
+        this.controls.prevButton.OnEvent("Click", ObjBindMethod(this, "OnPreviousSentence"))
+        this.controls.nextButton.OnEvent("Click", ObjBindMethod(this, "OnNextSentence"))
         
         ; GUI close event
         this.gui.OnEvent("Close", ObjBindMethod(this, "OnExit"))
@@ -419,11 +426,15 @@ class UIManager {
         
         ; Enable pause button when playback starts
         this.controls.pauseButton.Enabled := true
+        this.controls.prevButton.Enabled := true
+        this.controls.nextButton.Enabled := true
     }
     
     OnStopPlayback(*) {
         this.ttsPlayer.StopPlayback(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
         this.controls.pauseButton.Enabled := false
+        this.controls.prevButton.Enabled := false
+        this.controls.nextButton.Enabled := false
     }
     
     OnPausePlayback(*) {
@@ -496,7 +507,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w296 h418")
+        this.gui.Show("w336 h418")
     }
     
     GetTextBox() {
@@ -531,5 +542,15 @@ class UIManager {
             return
         }
         this.controls.statusLabel.Text := this.GetText("maxWordsSet") . " " . this.audioSettings.maxWordsPerSentence
+    }
+    
+    OnPreviousSentence(*) {
+        ; Call the same method used by the scroll wheel hotkey
+        this.ttsPlayer.GoToPreviousSentence(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
+    }
+    
+    OnNextSentence(*) {
+        ; Call the same method used by the scroll wheel hotkey  
+        this.ttsPlayer.GoToNextSentence(this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
     }
 }
