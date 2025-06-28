@@ -71,11 +71,7 @@ class TTSPlayer {
         playButton.Text := "▶ Play"
         stopButton.Enabled := true
         statusText := "🎵 Playing: " . StrSplit(voice.display, "(")[1]
-        statusText .= " (" . Round(this.audioSettings.speechSpeed, 1) . "x"
-        if (this.audioSettings.useAudioEnhancement) {
-            statusText .= ", Enhanced"
-        }
-        statusText .= ", " . this.sentences.Length . " sentences)"
+        statusText .= " (" . Round(this.audioSettings.speechSpeed, 1) . "x, " . this.sentences.Length . " sentences)"
         statusLabel.Text := statusText
         this.PlayNextSentence(voice, statusLabel, playButton, stopButton)
         return true

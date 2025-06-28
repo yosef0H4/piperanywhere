@@ -4,7 +4,6 @@
 class AudioSettings {
     
     __New() {
-        this.useAudioEnhancement := true
         this.speechSpeed := 1.0
         this.volumeBoost := 2
         this.sentenceSilence := 0.2
@@ -22,10 +21,6 @@ class AudioSettings {
         this.piperPath := piperPath
         this.ffmpegPath := ffmpegPath
         this.ffplayPath := ffplayPath
-    }
-    
-    SetEnhancement(enabled) {
-        this.useAudioEnhancement := enabled
     }
     
     SetSpeed(speed) {
@@ -60,40 +55,15 @@ class AudioSettings {
         return false
     }
     
-    GetQualityDescription() {
-        if (this.useAudioEnhancement) {
-            return "🎵 Enhanced: Dynamic Normalization + Volume Control + Speech Compression"
-        } else {
-            return "🔇 Standard: Direct Piper output"
-        }
-    }
-    
     BuildAudioCommand(voiceFile, tempTextFile) {
         ; Build the piper command with dynamic path
-        piperCmd := 'type "' . tempTextFile . '" | "' . this.piperPath . '" --model ".\\voices\\' . voiceFile . '"'
+        piperCmd := 'type "' . tempTextFile . '" | "' . this.piperPath . '" --model ".\voices\' . voiceFile . '"'
         piperCmd .= ' --length_scale ' . (1 / this.speechSpeed)
         piperCmd .= ' --sentence_silence ' . this.sentenceSilence
         piperCmd .= ' --output-raw'
         
-        if (this.useAudioEnhancement) {
-            ; Fixed audio filters to prevent first word loudness spike
-            ; Use faster dynaudnorm response and predictive compand mode
-            audioFilters := "dynaudnorm=f=150:g=11:p=0.9:s=5:b=1"
-            
-            if (this.volumeBoost != 0) {
-                audioFilters .= ",volume=" . this.volumeBoost . "dB"
-            }
-            
-            ; Use predictive compand with proper delay and quieter initial volume
-            audioFilters .= ",compand=.3|.3:1|1:-90/-60|-60/-40|-40/-30|-20/-20:6:0.3:-30:0.2"
-            
-            command := A_ComSpec . ' /c ' . piperCmd 
-            command .= ' | "' . this.ffmpegPath . '" -f s16le -ar 22050 -ch_layout mono -i - -af "' . audioFilters . '" -f wav -'
-            command .= ' | "' . this.ffplayPath . '" -f wav -nodisp -autoexit -'
-        } else {
-            command := A_ComSpec . ' /c ' . piperCmd
-            command .= ' | "' . this.ffplayPath . '" -f s16le -ar 22050 -ch_layout mono -nodisp -autoexit -'
-        }
+        command := A_ComSpec . ' /c ' . piperCmd
+        command .= ' | "' . this.ffplayPath . '" -f s16le -ar 22050 -ch_layout mono -nodisp -autoexit -'
         
         return command
     }

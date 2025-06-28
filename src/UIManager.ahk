@@ -24,7 +24,6 @@ class UIManager {
            "audioGroup", "Audio Settings",
            "textGroup", "Text to Speak",
            "controlsGroup", "Controls",
-           "enhancedCheckbox", "🔊 Enhanced",
            "speedLabel", "Speed:",
            "slowLabel", "Slow",
            "fastLabel", "Fast",
@@ -39,12 +38,10 @@ class UIManager {
            "helpMenu", "❓ &Help",
            "aboutMenu", "ℹ️ &About",
            "exitMenu", "✖️ &Exit",
-           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n🔧 Audio Settings:`n• Enhanced: Better quality with filters`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
+           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n�� Audio Settings:`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
            "voiceRefreshed", "Voice list refreshed",
            "voicesFolderOpened", "Opened voices folder",
            "voicesFolderNotFound", "Voices folder not found!",
-           "audioEnhancementEnabled", "Audio enhancement enabled",
-           "audioEnhancementDisabled", "Audio enhancement disabled",
            "invalidSpeed", "❌ Invalid speed: Not a number",
            "speedSet", "Speed set to",
            "invalidVolume", "❌ Invalid volume: Not a number",
@@ -85,7 +82,6 @@ class UIManager {
            "audioGroup", "إعدادات الصوت",
            "textGroup", "النص المراد قراءته",
            "controlsGroup", "التحكم",
-           "enhancedCheckbox", "🔊 محسن",
            "speedLabel", "السرعة:",
            "slowLabel", "بطيء",
            "fastLabel", "سريع",
@@ -100,12 +96,10 @@ class UIManager {
            "helpMenu", "❓ &مساعدة",
            "aboutMenu", "ℹ️ &حول",
            "exitMenu", "✖️ &خروج",
-           "helpText", "🎙️ مساعدة Piper TTS`n`n📝 الاستخدام الأساسي:`n1. اختر صوتًا من القائمة المنسدلة`n2. أدخل النص للقراءة`n3. انقر فوق تشغيل أو استخدم مفاتيح الاختصار`n`n⌨️ مفاتيح الاختصار:`n• CapsLock + C: نسخ النص المحدد وتشغيله`n• CapsLock + X: OCR لمنطقة الشاشة وتشغيلها`n• CapsLock + Z: تحديث OCR من آخر منطقة محفوظة`n• CapsLock + S: إيقاف التشغيل`n• CapsLock + A: تبديل إيقاف التشغيل مؤقتًا`n• CapsLock + Scroll Down: الانتقال إلى الجملة السابقة`n• CapsLock + Scroll Up: الانتقال إلى الجملة التالية`n`n🔧 إعدادات الصوت:`n• محسن: جودة أفضل مع الفلاتر`n• السرعة: سرعة التشغيل من 0.5x إلى 2.0x`n• مستوى الصوت: تعزيز من -10dB إلى +20dB`n`n📁 الملفات:`n• الأصوات: ضع ملفات .onnx في مجلد الأصوات`n• التبعيات: يلزم وجود FFmpeg و Piper`n`nℹ️ انقر فوق 'التبعيات' للتحقق من حالة التثبيت.",
+           "helpText", "🎙️ مساعدة Piper TTS`n`n📝 الاستخدام الأساسي:`n1. اختر صوتًا من القائمة المنسدلة`n2. أدخل النص للقراءة`n3. انقر فوق تشغيل أو استخدم مفاتيح الاختصار`n`n⌨️ مفاتيح الاختصار:`n• CapsLock + C: نسخ النص المحدد وتشغيله`n• CapsLock + X: OCR لمنطقة الشاشة وتشغيلها`n• CapsLock + Z: تحديث OCR من آخر منطقة محفوظة`n• CapsLock + S: إيقاف التشغيل`n• CapsLock + A: تبديل إيقاف التشغيل مؤقتًا`n• CapsLock + Scroll Down: الانتقال إلى الجملة السابقة`n• CapsLock + Scroll Up: الانتقال إلى الجملة التالية`n`n🔧 إعدادات الصوت:`n• السرعة: سرعة التشغيل من 0.5x إلى 2.0x`n• مستوى الصوت: تعزيز من -10dB إلى +20dB`n`n📁 الملفات:`n• الأصوات: ضع ملفات .onnx في مجلد الأصوات`n• التبعيات: يلزم وجود FFmpeg و Piper`n`nℹ️ انقر فوق 'التبعيات' للتحقق من حالة التثبيت.",
            "voiceRefreshed", "تم تحديث قائمة الأصوات",
            "voicesFolderOpened", "تم فتح مجلد الأصوات",
            "voicesFolderNotFound", "لم يتم العثور على مجلد الأصوات!",
-           "audioEnhancementEnabled", "تم تفعيل تحسين الصوت",
-           "audioEnhancementDisabled", "تم إلغاء تحسين الصوت",
            "invalidSpeed", "❌ سرعة غير صحيحة: ليس رقماً",
            "speedSet", "تم تعيين السرعة إلى",
            "invalidVolume", "❌ مستوى صوت غير صحيح: ليس رقماً",
@@ -203,12 +197,8 @@ class UIManager {
         this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h110", this.GetText("audioGroup"))
         this.controls.audioGroup.SetFont("s8 Bold", "Segoe UI")
         
-        ; Enhancement toggle
-        this.controls.enhancementCheckbox := this.gui.AddCheckbox("x16 y142 w90 h16 Checked", this.GetText("enhancedCheckbox"))
-        this.controls.enhancementCheckbox.SetFont("s8")
-        
         ; Text cleaning toggle
-        this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x110 y142 w100 h16", this.GetText("cleanTextCheckbox"))
+        this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x15 y142 w100 h16", this.GetText("cleanTextCheckbox"))
         this.controls.cleanTextCheckbox.SetFont("s8")
         
         ; Speed control
@@ -297,7 +287,6 @@ class UIManager {
         ; Use bound methods to maintain 'this' context
         this.controls.refreshButton.OnEvent("Click", ObjBindMethod(this, "OnRefreshVoices"))
         this.controls.voicesButton.OnEvent("Click", ObjBindMethod(this, "OnOpenVoicesFolder"))
-        this.controls.enhancementCheckbox.OnEvent("Click", ObjBindMethod(this, "OnEnhancementToggled"))
         this.controls.cleanTextCheckbox.OnEvent("Click", ObjBindMethod(this, "OnCleanTextToggled"))
         this.controls.speedSlider.OnEvent("Change", ObjBindMethod(this, "OnSpeedChanged"))
         this.controls.speedInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnSpeedInputChanged"))
@@ -337,9 +326,6 @@ class UIManager {
         this.controls.pauseButton.Text := this.GetText("pauseButton")
         this.controls.refreshButton.Text := this.GetText("refreshButton")
         this.controls.voicesButton.Text := this.GetText("voicesButton")
-        
-        ; Update checkbox
-        this.controls.enhancementCheckbox.Text := this.GetText("enhancedCheckbox")
         
         ; Update clean text checkbox
         this.controls.cleanTextCheckbox.Text := this.GetText("cleanTextCheckbox")
@@ -386,13 +372,6 @@ class UIManager {
         } else {
             MsgBox(this.GetText("voicesFolderNotFound"), this.GetText("errorTitle"), "Iconx")
         }
-    }
-    
-    OnEnhancementToggled(*) {
-        this.audioSettings.SetEnhancement(this.controls.enhancementCheckbox.Value)
-        this.UpdateQualityInfo()
-        this.controls.statusLabel.Text := this.audioSettings.useAudioEnhancement ? 
-                                        this.GetText("audioEnhancementEnabled") : this.GetText("audioEnhancementDisabled")
     }
     
     OnCleanTextToggled(*) {
@@ -531,12 +510,8 @@ class UIManager {
         ExitApp()
     }
     
-    UpdateQualityInfo() {
-        this.controls.qualityLabel.Text := this.audioSettings.GetQualityDescription()
-    }
-    
     ShowGUI() {
-        this.gui.Show("w336 h438")
+        this.gui.Show("w336 h418")
     }
     
     GetTextBox() {
