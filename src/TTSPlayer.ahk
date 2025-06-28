@@ -360,13 +360,15 @@ class TTSPlayer {
     
     UpdateSentenceTooltip() {
         
-        
+        ; Show tooltip during playback OR during navigation (when waitingForCapsLockRelease)
         if (!GetKeyState("CapsLock", "p") || !GetKeyState("x", "p")) {
-            if (this.currentProcessPID != 0 && this.isPlayingSentences && this.currentSentenceIndex > 0 && this.currentSentenceIndex <= this.sentences.Length) {
+            ; Show tooltip during playback or navigation
+            if ((this.currentProcessPID != 0 || piperApp.hotkeyManager.waitingForCapsLockRelease) && 
+                this.isPlayingSentences && this.currentSentenceIndex > 0 && this.currentSentenceIndex <= this.sentences.Length) {
                 MouseGetPos(&mouseX, &mouseY)
                 currentIndex := this.currentSentenceIndex
                 currentSentence := this.sentences[currentIndex]
-                sentenceWithIndex := "(" . currentIndex . "/" . this.sentences.Length ") " . currentSentence
+                sentenceWithIndex := "(" . currentIndex . "/" . this.sentences.Length . ") " . currentSentence
                 ToolTip(sentenceWithIndex, mouseX + 15, mouseY + 30)
             }
         }
@@ -521,5 +523,53 @@ class TTSPlayer {
         } catch {
             this.FinishSentencePlayback(statusLabel, playButton, stopButton)
         }
+    }
+    
+    GoToPreviousSentenceNoPlay(statusLabel) {
+        ; Clear any existing tooltip first
+        ToolTip()
+        
+        ; Only allow navigation during sentence playback
+        if (!this.isPlayingSentences || this.sentences.Length = 0) {
+            return
+        }
+        
+        ; Move to previous sentence with bounds checking
+        if (this.currentSentenceIndex > 1) {
+            this.currentSentenceIndex--
+        } else {
+            ; If at first sentence, go to last sentence (wrap around)
+            this.currentSentenceIndex := this.sentences.Length
+        }
+        
+        ; Update status but don't play
+        statusLabel.Text := "⏮ Previous sentence (" . this.currentSentenceIndex . "/" . this.sentences.Length . ") - Release CapsLock to play"
+        
+        ; Start the tooltip timer to follow the cursor during navigation
+        SetTimer(this.tooltipTimer, 50)
+    }
+    
+    GoToNextSentenceNoPlay(statusLabel) {
+        ; Clear any existing tooltip first
+        ToolTip()
+        
+        ; Only allow navigation during sentence playback
+        if (!this.isPlayingSentences || this.sentences.Length = 0) {
+            return
+        }
+        
+        ; Move to next sentence with bounds checking
+        if (this.currentSentenceIndex < this.sentences.Length) {
+            this.currentSentenceIndex++
+        } else {
+            ; If at last sentence, go to first sentence (wrap around)
+            this.currentSentenceIndex := 1
+        }
+        
+        ; Update status but don't play
+        statusLabel.Text := "⏭ Next sentence (" . this.currentSentenceIndex . "/" . this.sentences.Length . ") - Release CapsLock to play"
+        
+        ; Start the tooltip timer to follow the cursor during navigation
+        SetTimer(this.tooltipTimer, 50)
     }
 } 
