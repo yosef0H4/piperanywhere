@@ -128,6 +128,7 @@ class TTSPlayer {
         tempText := StrReplace(tempText, ".", "." . delimiter)
         tempText := StrReplace(tempText, "!", "!" . delimiter)
         tempText := StrReplace(tempText, "?", "?" . delimiter)
+        tempText := StrReplace(tempText, ",", "," . delimiter)
         tempText := StrReplace(tempText, "`n", delimiter)
         initialChunks := StrSplit(tempText, delimiter)
         for chunk in initialChunks {
@@ -153,15 +154,70 @@ class TTSPlayer {
             }
             
             ; Count words in current sentence
-            wordCount := StrSplit(currentSentence, [" ", A_Tab]).Length
+            words := StrSplit(currentSentence, [" ", A_Tab])
+            wordCount := words.Length
+            
+            ; If sentence is too long, split it
+            if (wordCount > this.audioSettings.maxWordsPerSentence) {
+                ; Split the sentence at the max word boundary
+                firstPart := []
+                secondPart := []
+                
+                ; Take the first maxWordsPerSentence words for the first part
+                Loop this.audioSettings.maxWordsPerSentence {
+                    if (A_Index <= words.Length) {
+                        firstPart.Push(words[A_Index])
+                    }
+                }
+                
+                ; Put the remaining words in the second part
+                Loop words.Length - this.audioSettings.maxWordsPerSentence {
+                    remainingIndex := this.audioSettings.maxWordsPerSentence + A_Index
+                    if (remainingIndex <= words.Length) {
+                        secondPart.Push(words[remainingIndex])
+                    }
+                }
+                
+                ; Join the first part and add it to combined sentences
+                if (firstPart.Length > 0) {
+                    firstSentence := ""
+                    for word in firstPart {
+                        firstSentence .= (firstSentence = "" ? "" : " ") . word
+                    }
+                    combinedSentences.Push(firstSentence)
+                }
+                
+                ; If there are remaining words, insert them back into the sentences array
+                ; for processing in the next iteration
+                if (secondPart.Length > 0) {
+                    remainingSentence := ""
+                    for word in secondPart {
+                        remainingSentence .= (remainingSentence = "" ? "" : " ") . word
+                    }
+                    
+                    ; Insert the remaining sentence at the current position + 1
+                    sentences.InsertAt(i + 1, remainingSentence)
+                }
+                
+                i++
+                continue
+            }
             
             ; If sentence is too short, try to combine with next sentences
             while (wordCount < this.audioSettings.minWordsPerSentence && i < sentences.Length) {
                 i++
                 nextSentence := Trim(sentences[i])
                 if (nextSentence != "") {
-                    currentSentence .= " " . nextSentence
-                    wordCount := StrSplit(currentSentence, [" ", A_Tab]).Length
+                    ; Check if adding the next sentence would exceed max words
+                    combinedWords := StrSplit(currentSentence . " " . nextSentence, [" ", A_Tab])
+                    if (combinedWords.Length <= this.audioSettings.maxWordsPerSentence) {
+                        currentSentence .= " " . nextSentence
+                        wordCount := combinedWords.Length
+                    } else {
+                        ; Adding the full next sentence would exceed max, so break
+                        i-- ; Step back since we didn't use this sentence
+                        break
+                    }
                 }
             }
             
@@ -303,10 +359,16 @@ class TTSPlayer {
     }
     
     UpdateSentenceTooltip() {
-        if (this.currentProcessPID != 0 && this.isPlayingSentences && this.currentSentenceIndex > 0 && this.currentSentenceIndex <= this.sentences.Length) {
-            MouseGetPos(&mouseX, &mouseY)
-            currentSentence := this.sentences[this.currentSentenceIndex]
-            ToolTip(currentSentence, mouseX + 15, mouseY - 30)
+        
+        
+        if (!GetKeyState("CapsLock", "p") || !GetKeyState("x", "p")) {
+            if (this.currentProcessPID != 0 && this.isPlayingSentences && this.currentSentenceIndex > 0 && this.currentSentenceIndex <= this.sentences.Length) {
+                MouseGetPos(&mouseX, &mouseY)
+                currentIndex := this.currentSentenceIndex
+                currentSentence := this.sentences[currentIndex]
+                sentenceWithIndex := "(" . currentIndex . ") " . currentSentence
+                ToolTip(sentenceWithIndex, mouseX + 15, mouseY + 30)
+            }
         }
     }
     
