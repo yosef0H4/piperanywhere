@@ -366,7 +366,7 @@ class TTSPlayer {
                 MouseGetPos(&mouseX, &mouseY)
                 currentIndex := this.currentSentenceIndex
                 currentSentence := this.sentences[currentIndex]
-                sentenceWithIndex := "(" . currentIndex . ") " . currentSentence
+                sentenceWithIndex := "(" . currentIndex . "/" . this.sentences.Length ") " . currentSentence
                 ToolTip(sentenceWithIndex, mouseX + 15, mouseY + 30)
             }
         }
