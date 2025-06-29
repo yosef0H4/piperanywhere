@@ -34,6 +34,7 @@ class PiperTTSApp {
         this.audioSettings := AudioSettings()
         
         this.textCleaning := false
+        this.legacyMode := false
         ; Update audio settings with correct executable paths
         this.UpdateAudioSettingsPaths()
         
@@ -113,6 +114,14 @@ class PiperTTSApp {
         return this.textCleaning
     }
     
+    SetLegacyMode(enabled) {
+        this.legacyMode := enabled
+    }
+    
+    GetLegacyMode() {
+        return this.legacyMode
+    }
+    
     SaveSettings() {
         
             IniWrite(this.uiManager.controls.voiceDropdown.Value, this.settingsFile, "Settings", "VoiceIndex")
@@ -123,6 +132,7 @@ class PiperTTSApp {
             IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
             IniWrite(this.audioSettings.maxWordsPerSentence, this.settingsFile, "Settings", "MaxWords")
             IniWrite(this.textCleaning, this.settingsFile, "Settings", "TextCleaning")
+            IniWrite(this.legacyMode, this.settingsFile, "Settings", "LegacyMode")
         
     }
 
@@ -137,6 +147,7 @@ class PiperTTSApp {
             minWords := IniRead(this.settingsFile, "Settings", "MinWords", 6)
             maxWords := IniRead(this.settingsFile, "Settings", "MaxWords", 25)
             textCleaning := IniRead(this.settingsFile, "Settings", "TextCleaning", false)
+            legacyMode := IniRead(this.settingsFile, "Settings", "LegacyMode", false)
 
             ; Apply settings
             this.uiManager.controls.textBox.Text := lastText
@@ -156,6 +167,7 @@ class PiperTTSApp {
             this.audioSettings.SetMinWords(minWords)
             this.audioSettings.SetMaxWords(maxWords)
             this.SetTextCleaning(textCleaning)
+            this.SetLegacyMode(legacyMode)
 
             ; Update UI controls to reflect loaded settings
             this.uiManager.controls.speedInput.Text := Round(this.audioSettings.speechSpeed, 2)
@@ -165,6 +177,7 @@ class PiperTTSApp {
             this.uiManager.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
             this.uiManager.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
             this.uiManager.controls.cleanTextCheckbox.Value := this.textCleaning
+            this.uiManager.controls.legacyModeCheckbox.Value := this.legacyMode
         
     }
 }

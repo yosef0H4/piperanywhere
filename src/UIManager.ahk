@@ -38,7 +38,7 @@ class UIManager {
            "helpMenu", "❓ &Help",
            "aboutMenu", "ℹ️ &About",
            "exitMenu", "✖️ &Exit",
-           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n�� Audio Settings:`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
+           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n🔧 Audio Settings:`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
            "voiceRefreshed", "Voice list refreshed",
            "voicesFolderOpened", "Opened voices folder",
            "voicesFolderNotFound", "Voices folder not found!",
@@ -66,6 +66,7 @@ class UIManager {
            "sentenceIndexLabel", "Sentence:",
            "sentenceIndexInput", "Sentence index",
            "cleanTextCheckbox", "🧹 Clean Text",
+           "legacyModeCheckbox", "🕰️ Legacy Mode",
            "textCleaningEnabled", "Text cleaning enabled",
            "textCleaningDisabled", "Text cleaning disabled",
            "cleaningText", "Cleaning text..."
@@ -124,6 +125,7 @@ class UIManager {
            "sentenceIndexLabel", "الجملة:",
            "sentenceIndexInput", "فهرس الجملة",
            "cleanTextCheckbox", "🧹 تنظيف النص",
+           "legacyModeCheckbox", "🕰️ الوضع الكلاسيكي",
            "textCleaningEnabled", "تم تفعيل تنظيف النص",
            "textCleaningDisabled", "تم إلغاء تنظيف النص",
            "cleaningText", "تنظيف النص..."
@@ -200,6 +202,10 @@ class UIManager {
         ; Text cleaning toggle
         this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x15 y142 w100 h16", this.GetText("cleanTextCheckbox"))
         this.controls.cleanTextCheckbox.SetFont("s8")
+        
+        ; Legacy mode toggle
+        this.controls.legacyModeCheckbox := this.gui.AddCheckbox("x120 y142 w120 h16", this.GetText("legacyModeCheckbox"))
+        this.controls.legacyModeCheckbox.SetFont("s8")
         
         ; Speed control
         this.controls.speedLabel := this.gui.AddText("x16 y162 w25", this.GetText("speedLabel"))
@@ -288,6 +294,7 @@ class UIManager {
         this.controls.refreshButton.OnEvent("Click", ObjBindMethod(this, "OnRefreshVoices"))
         this.controls.voicesButton.OnEvent("Click", ObjBindMethod(this, "OnOpenVoicesFolder"))
         this.controls.cleanTextCheckbox.OnEvent("Click", ObjBindMethod(this, "OnCleanTextToggled"))
+        this.controls.legacyModeCheckbox.OnEvent("Click", ObjBindMethod(this, "OnLegacyModeToggled"))
         this.controls.speedSlider.OnEvent("Change", ObjBindMethod(this, "OnSpeedChanged"))
         this.controls.speedInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnSpeedInputChanged"))
         this.controls.volumeSlider.OnEvent("Change", ObjBindMethod(this, "OnVolumeChanged"))
@@ -329,6 +336,7 @@ class UIManager {
         
         ; Update clean text checkbox
         this.controls.cleanTextCheckbox.Text := this.GetText("cleanTextCheckbox")
+        this.controls.legacyModeCheckbox.Text := this.GetText("legacyModeCheckbox")
         
         ; Update labels
         this.controls.speedLabel.Text := this.GetText("speedLabel")
@@ -378,6 +386,11 @@ class UIManager {
         this.app.SetTextCleaning(this.controls.cleanTextCheckbox.Value)
         this.controls.statusLabel.Text := this.app.GetTextCleaning() ? 
                                         this.GetText("textCleaningEnabled") : this.GetText("textCleaningDisabled")
+    }
+    
+    OnLegacyModeToggled(*) {
+        this.app.SetLegacyMode(this.controls.legacyModeCheckbox.Value)
+        this.controls.statusLabel.Text := this.controls.legacyModeCheckbox.Value ? "🕰️ Legacy mode enabled" : "🕰️ Legacy mode disabled"
     }
     
     OnSpeedChanged(*) {

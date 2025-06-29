@@ -42,6 +42,18 @@ class TTSPlayer {
         
         this.CleanupTempFiles()
         
+        if (piperApp.GetLegacyMode()) {
+            ; Legacy mode: play all text at once, no segmentation
+            this.sentences := [textToSpeak]
+            this.currentSentenceIndex := 1
+            this.isPlayingSentences := false
+            playButton.Enabled := true
+            playButton.Text := "▶ Play"
+            stopButton.Enabled := true
+            statusLabel.Text := "🎵 Playing (Legacy Mode)"
+            this.PlayLegacyText(voice, textToSpeak, statusLabel, playButton, stopButton)
+            return true
+        }
         ; Split text into sentences
         this.sentences := this.SplitTextIntoSentences(textToSpeak)
         if (this.sentences.Length = 0) {
@@ -304,10 +316,11 @@ class TTSPlayer {
     }
     
     UpdateSentenceTooltip() {
-        
+        if (piperApp.GetLegacyMode()) {
+            return ; No tooltip updates in legacy mode
+        }
         ; Show tooltip during playback OR during navigation (when waitingForCapsLockRelease)
         if (!GetKeyState("CapsLock", "p") || !GetKeyState("x", "p")) {
-            ; Show tooltip during playback or navigation
             if ((this.currentProcessPID != 0 || piperApp.hotkeyManager.waitingForCapsLockRelease) && 
                 this.isPlayingSentences && this.currentSentenceIndex > 0 && this.currentSentenceIndex <= this.sentences.Length) {
                 MouseGetPos(&mouseX, &mouseY)
@@ -546,5 +559,29 @@ class TTSPlayer {
         cleanedText := RegExReplace(cleanedText, "([.!?]){4,}", "$1$1$1")
         
         return cleanedText
+    }
+    
+    PlayLegacyText(voice, textToSpeak, statusLabel, playButton, stopButton) {
+        this.tempTextFile := A_Temp . "\piper_legacy_" . A_TickCount . ".txt"
+        try {
+            FileAppend(textToSpeak, this.tempTextFile, "UTF-8")
+        } catch as e {
+            MsgBox("Failed to create temporary file: " . e.Message, "File Error", "Iconx")
+            statusLabel.Text := "❌ File error"
+            this.FinishSentencePlayback(statusLabel, playButton, stopButton)
+            return
+        }
+        command := this.audioSettings.BuildAudioCommand(voice.file, this.tempTextFile)
+        MouseGetPos(&mouseX, &mouseY)
+        ToolTip("🎵 Playing all text (Legacy Mode)", mouseX + 15, mouseY + 30)
+        SetTimer(() => ToolTip(), -1000) ; Hide tooltip after 1s
+        try {
+            Run(command, , "Hide", &this.currentProcessPID)
+            SetTimer(this.playbackTimer, 250)
+        } catch as e {
+            MsgBox("Failed to start playback: " . e.Message, "Playback Error", "Iconx")
+            this.CleanupTempFiles()
+            this.FinishSentencePlayback(statusLabel, playButton, stopButton)
+        }
     }
 } 
