@@ -38,7 +38,7 @@ class UIManager {
            "helpMenu", "❓ &Help",
            "aboutMenu", "ℹ️ &About",
            "exitMenu", "✖️ &Exit",
-           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n🔧 Audio Settings:`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
+           "helpText", "🎙️ Piper TTS Help`n`n📝 Basic Usage:`n1. Select a voice from the dropdown`n2. Enter text to speak`n3. Click Play or use hotkeys`n`n⌨️ Hotkeys:`n• CapsLock + C: Copy selected text and play`n• CapsLock + X: OCR screen area and play`n• CapsLock + Z: Refresh OCR from last saved area`n• CapsLock + S: Stop playback`n• CapsLock + A: Toggle pause playback`n• CapsLock + Scroll Down: Go to previous sentence`n• CapsLock + Scroll Up: Go to next sentence`n`n�� Audio Settings:`n• Speed: 0.5x to 2.0x playback speed`n• Volume: -10dB to +20dB boost`n`n📁 Files:`n• Voices: Place .onnx files in voices folder`n• Dependencies: FFmpeg and Piper required`n`nℹ️ Click 'Dependencies' to check installation status.",
            "voiceRefreshed", "Voice list refreshed",
            "voicesFolderOpened", "Opened voices folder",
            "voicesFolderNotFound", "Voices folder not found!",
@@ -68,10 +68,7 @@ class UIManager {
            "cleanTextCheckbox", "🧹 Clean Text",
            "textCleaningEnabled", "Text cleaning enabled",
            "textCleaningDisabled", "Text cleaning disabled",
-           "cleaningText", "Cleaning text...",
-           "gpuCheckbox", "🎮 Use GPU (CUDA)",
-           "gpuEnabled", "GPU acceleration enabled",
-           "gpuDisabled", "GPU acceleration disabled"
+           "cleaningText", "Cleaning text..."
        )
        
        this.arabicMap := Map(
@@ -129,10 +126,7 @@ class UIManager {
            "cleanTextCheckbox", "🧹 تنظيف النص",
            "textCleaningEnabled", "تم تفعيل تنظيف النص",
            "textCleaningDisabled", "تم إلغاء تنظيف النص",
-           "cleaningText", "تنظيف النص...",
-           "gpuCheckbox", "🎮 استخدام GPU (CUDA)",
-           "gpuEnabled", "تم تفعيل تسريع GPU",
-           "gpuDisabled", "تم إلغاء تسريع GPU"
+           "cleaningText", "تنظيف النص..."
        )
     }
     
@@ -200,48 +194,36 @@ class UIManager {
     }
     
     CreateAudioSection() {
-        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h130", this.GetText("audioGroup"))
+        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h110", this.GetText("audioGroup"))
         this.controls.audioGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Text cleaning toggle
         this.controls.cleanTextCheckbox := this.gui.AddCheckbox("x15 y142 w100 h16", this.GetText("cleanTextCheckbox"))
         this.controls.cleanTextCheckbox.SetFont("s8")
         
-        ; GPU acceleration toggle
-        this.controls.gpuCheckbox := this.gui.AddCheckbox("x130 y142 w120 h16", this.GetText("gpuCheckbox"))
-        this.controls.gpuCheckbox.SetFont("s8")
-        
-        ; Check if CUDA is available and enable/disable accordingly
-        if (this.app.dependencyChecker.IsCUDAAvailable()) {
-            this.controls.gpuCheckbox.Enabled := true
-        } else {
-            this.controls.gpuCheckbox.Enabled := false
-            this.controls.gpuCheckbox.Text := this.GetText("gpuCheckbox") . " (N/A)"
-        }
-        
         ; Speed control
-        this.controls.speedLabel := this.gui.AddText("x16 y165 w25", this.GetText("speedLabel"))
-        this.controls.slowLabel := this.gui.AddText("x+6 y165 w35", this.GetText("slowLabel"))
-        this.controls.speedSlider := this.gui.AddSlider("x100 y163 w60 h20 Range50-200 NoTicks", 100)
-        this.controls.fastLabel := this.gui.AddText("x+6 y165 w25", this.GetText("fastLabel"))
-        this.controls.speedInput := this.gui.AddEdit("x+6 y165 w30 h16", "1.0")
+        this.controls.speedLabel := this.gui.AddText("x16 y162 w25", this.GetText("speedLabel"))
+        this.controls.slowLabel := this.gui.AddText("x+6 y162 w35", this.GetText("slowLabel"))
+        this.controls.speedSlider := this.gui.AddSlider("x100 y160 w60 h20 Range50-200 NoTicks", 100)
+        this.controls.fastLabel := this.gui.AddText("x+6 y162 w25", this.GetText("fastLabel"))
+        this.controls.speedInput := this.gui.AddEdit("x+6 y162 w30 h16", "1.0")
         this.controls.speedInput.SetFont("s8 Bold")
         
         ; Volume control
-        this.controls.volumeLabel := this.gui.AddText("x16 y181", this.GetText("volumeLabel"))
-        this.controls.quietLabel := this.gui.AddText("x+3 y181", this.GetText("quietLabel"))
-        this.controls.volumeSlider := this.gui.AddSlider("x100 y179 w60 h20 Range-10-20 NoTicks", 2)
-        this.controls.loudLabel := this.gui.AddText("x+6 y181 w30 h16", this.GetText("loudLabel"))
-        this.controls.volumeInput := this.gui.AddEdit("x+6 y181 w30 h16", "2")
+        this.controls.volumeLabel := this.gui.AddText("x16 y178", this.GetText("volumeLabel"))
+        this.controls.quietLabel := this.gui.AddText("x+3 y178", this.GetText("quietLabel"))
+        this.controls.volumeSlider := this.gui.AddSlider("x100 y176 w60 h20 Range-10-20 NoTicks", 2)
+        this.controls.loudLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("loudLabel"))
+        this.controls.volumeInput := this.gui.AddEdit("x+6 y178 w30 h16", "2")
         this.controls.volumeInput.SetFont("s8 Bold")
-        this.controls.dbLabel := this.gui.AddText("x+6 y181 w30 h16", this.GetText("dbLabel"))
+        this.controls.dbLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("dbLabel"))
         
         ; Word count controls
-        this.controls.minWordsLabel := this.gui.AddText("x16 y197 w40", this.GetText("minWordsLabel"))
-        this.controls.minWordsInput := this.gui.AddEdit("x+6 y197 w30 h16", "6")
+        this.controls.minWordsLabel := this.gui.AddText("x16 y194 w40", this.GetText("minWordsLabel"))
+        this.controls.minWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "6")
         this.controls.minWordsInput.SetFont("s8 Bold")
-        this.controls.maxWordsLabel := this.gui.AddText("x+6 y197 w40", this.GetText("maxWordsLabel"))
-        this.controls.maxWordsInput := this.gui.AddEdit("x+6 y197 w30 h16", "25")
+        this.controls.maxWordsLabel := this.gui.AddText("x+6 y194 w40", this.GetText("maxWordsLabel"))
+        this.controls.maxWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "25")
         this.controls.maxWordsInput.SetFont("s8 Bold")
     }
     
@@ -306,7 +288,6 @@ class UIManager {
         this.controls.refreshButton.OnEvent("Click", ObjBindMethod(this, "OnRefreshVoices"))
         this.controls.voicesButton.OnEvent("Click", ObjBindMethod(this, "OnOpenVoicesFolder"))
         this.controls.cleanTextCheckbox.OnEvent("Click", ObjBindMethod(this, "OnCleanTextToggled"))
-        this.controls.gpuCheckbox.OnEvent("Click", ObjBindMethod(this, "OnGPUToggled"))
         this.controls.speedSlider.OnEvent("Change", ObjBindMethod(this, "OnSpeedChanged"))
         this.controls.speedInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnSpeedInputChanged"))
         this.controls.volumeSlider.OnEvent("Change", ObjBindMethod(this, "OnVolumeChanged"))
@@ -348,9 +329,6 @@ class UIManager {
         
         ; Update clean text checkbox
         this.controls.cleanTextCheckbox.Text := this.GetText("cleanTextCheckbox")
-        
-        ; Update GPU checkbox
-        this.controls.gpuCheckbox.Text := this.GetText("gpuCheckbox")
         
         ; Update labels
         this.controls.speedLabel.Text := this.GetText("speedLabel")
@@ -400,12 +378,6 @@ class UIManager {
         this.app.SetTextCleaning(this.controls.cleanTextCheckbox.Value)
         this.controls.statusLabel.Text := this.app.GetTextCleaning() ? 
                                         this.GetText("textCleaningEnabled") : this.GetText("textCleaningDisabled")
-    }
-    
-    OnGPUToggled(*) {
-        this.audioSettings.SetGPU(this.controls.gpuCheckbox.Value)
-        this.controls.statusLabel.Text := this.audioSettings.useGPU ? 
-                                        this.GetText("gpuEnabled") : this.GetText("gpuDisabled")
     }
     
     OnSpeedChanged(*) {
@@ -539,7 +511,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w336 h438")
+        this.gui.Show("w336 h418")
     }
     
     GetTextBox() {

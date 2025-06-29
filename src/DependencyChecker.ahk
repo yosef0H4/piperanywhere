@@ -16,7 +16,6 @@ class DependencyChecker {
         ]
         this.dependencyStatus := Map()
         this.downloadInProgress := false
-        this.cudaAvailable := false
     }
     
     ; Main method to check all dependencies
@@ -37,8 +36,6 @@ class DependencyChecker {
             return false
         }
         
-        ; Check CUDA availability
-        this.CheckCUDAAvailability()
         return true
     }
     
@@ -228,9 +225,6 @@ class DependencyChecker {
             }
         }
         
-        ; Add CUDA information
-        summary .= "🎮 GPU Acceleration:`n" . this.GetCUDAStatus() . "`n`n"
-        
         return summary
     }
     
@@ -257,32 +251,5 @@ class DependencyChecker {
         }
         
         return false
-    }
-    
-    ; Check if CUDA is available on the system
-    CheckCUDAAvailability() {
-        try {
-            ; Try to run nvidia-smi to detect NVIDIA GPU
-            RunWait("nvidia-smi", , "Hide")
-            this.cudaAvailable := true
-        } catch {
-            ; Try alternative method - check for CUDA toolkit
-            try {
-                RunWait("nvcc --version", , "Hide")
-                this.cudaAvailable := true
-            } catch {
-                this.cudaAvailable := false
-            }
-        }
-    }
-    
-    ; Get CUDA availability status
-    IsCUDAAvailable() {
-        return this.cudaAvailable
-    }
-    
-    ; Get CUDA status as text
-    GetCUDAStatus() {
-        return this.cudaAvailable ? "✅ CUDA Available" : "❌ CUDA Not Detected"
     }
 }

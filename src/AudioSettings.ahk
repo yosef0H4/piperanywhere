@@ -9,7 +9,6 @@ class AudioSettings {
         this.sentenceSilence := 0.2
         this.minWordsPerSentence := 6
         this.maxWordsPerSentence := 25
-        this.useGPU := false
         
         ; Default paths (will be updated by DependencyChecker)
         this.piperPath := ".\piper\piper.exe"
@@ -56,22 +55,11 @@ class AudioSettings {
         return false
     }
     
-    SetGPU(useGPU) {
-        if (Type(useGPU) = "Integer") {
-            this.useGPU := useGPU
-            return true
-        }
-        return false
-    }
-    
     BuildAudioCommand(voiceFile, tempTextFile) {
         ; Build the piper command with dynamic path
         piperCmd := 'type "' . tempTextFile . '" | "' . this.piperPath . '" --model ".\voices\' . voiceFile . '"'
         piperCmd .= ' --length_scale ' . (1 / this.speechSpeed)
         piperCmd .= ' --sentence_silence ' . this.sentenceSilence
-        if (this.useGPU) {
-            piperCmd .= ' --cuda'
-        }
         piperCmd .= ' --output-raw'
         
         command := A_ComSpec . ' /c ' . piperCmd
