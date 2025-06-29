@@ -134,6 +134,7 @@ class PiperDependenciesInstaller {
         this.currentPage := "pathselect"
         this.installPath := EnvGet("LOCALAPPDATA") . "\Programs\piperAnywhere"  ; Default installation path
         this.dependencies := Map(
+            "mainApp", {status: "Not checked", exists: false, path: ""},
             "piper", {status: "Not checked", exists: false, path: ""},
             "ffmpeg", {status: "Not checked", exists: false, path: ""},
             "ffplay", {status: "Not checked", exists: false, path: ""},
@@ -178,7 +179,7 @@ class PiperDependenciesInstaller {
             "Select where you want to install Piper TTS and its components.")
         
         ; Installation path section
-        this.controls["path_label"] := this.gui.AddText("x20 y+20 w460 h20", "Installation Path:")
+        this.controls["path_label"] := this.gui.AddText("x20 y+5 w460 h20", "Installation Path:")
         this.controls["path_label"].SetFont("s10 Bold")
         
         ; Path input with browse button
@@ -485,6 +486,8 @@ class PiperDependenciesInstaller {
     CheckDependencies() {
         for name, info in this.dependencies {
             switch name {
+                case "mainApp":
+                    info.exists := FileExist(info.path) ? true : false
                 case "piper":
                     info.exists := this.CheckExecutable(info.path, "piper --version", "Piper")
                 case "ffmpeg":
@@ -559,6 +562,7 @@ class PiperDependenciesInstaller {
     
     FormatDependencyName(name) {
         switch name {
+            case "mainApp": return "piperAnywhere"
             case "piper": return "Piper TTS"
             case "ffmpeg": return "FFmpeg"
             case "ffplay": return "FFplay"
@@ -576,6 +580,7 @@ class PiperDependenciesInstaller {
         for name, info in this.dependencies {
             if (!info.exists) {
                 switch name {
+                    case "mainApp": this.totalSteps += 1  ; just copy the executable
                     case "piper": this.totalSteps += 3  ; download, extract, move
                     case "ffmpeg", "ffplay": this.totalSteps += 3  ; download, extract, move (counted once)
                     case "voices": this.totalSteps += 2  ; download both files
@@ -599,6 +604,12 @@ class PiperDependenciesInstaller {
     }
     
     InstallNextComponent() {
+        ; Install the main application
+        if (!this.dependencies["mainApp"].exists && !this.Get("mainAppInstalled", false)) {
+            this.InstallMainApplication()
+            return
+        }
+        
         ; Install the main application
         if (!this.Get("mainAppInstalled", false)) {
             this.InstallMainApplication()
@@ -1091,6 +1102,7 @@ class PiperDependenciesInstaller {
     }
     
     UpdateDependencyPaths() {
+        this.dependencies["mainApp"].path := this.installPath . "\piperAnywhere.exe"
         this.dependencies["piper"].path := this.installPath . "\piper\piper.exe"
         this.dependencies["ffmpeg"].path := this.installPath . "\ffmpeg\bin\ffmpeg.exe"
         this.dependencies["ffplay"].path := this.installPath . "\ffmpeg\bin\ffplay.exe"
