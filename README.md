@@ -34,7 +34,7 @@ High-quality text-to-speech with global hotkeys, OCR integration, and smart play
 **Download Dependencies:**
 - **Piper TTS**: [Download piper.exe](https://github.com/rhasspy/piper/releases) → `piper/piper.exe`
 - **FFmpeg**: [Download FFmpeg](https://ffmpeg.org/download.html) → `ffmpeg/bin/ffmpeg.exe` & `ffplay.exe`
-- **Voice Models**: [Browse voices](https://huggingface.co/rhasspy/piper-voices/tree/main) → `voices/` (try `en_GB-alba-medium.onnx`)
+- **Voice Models**: [Browse voices](https://huggingface.co/rhasspy/piper-voices/tree/main) → `voices/` (try `en_US-lessac-medium.onnx`)
 
 **Requirements:** [AutoHotkey v2.1-alpha.18 installed](https://www.autohotkey.com/download/2.1/)
 
@@ -43,6 +43,7 @@ High-quality text-to-speech with global hotkeys, OCR integration, and smart play
 ### 🎯 Automated Installation (Convenience)
 
 Download `piperAnywhereWizard.exe` from releases. May trigger antivirus false positives.
+> **Note**: The wizard defaults to `en_GB-alba-medium`, but `en_US-lessac-medium` is recommended for better quality.
 
 ## ⌨️ Hotkeys
 
