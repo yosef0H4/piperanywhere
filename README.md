@@ -18,7 +18,7 @@ High-quality text-to-speech with global hotkeys, OCR integration, and smart play
 - **⏸️ Sentence Navigation**: Pause/resume at any sentence, navigate with scroll wheel
 - **🎛️ Audio Controls**: Speed (0.5x-2.0x), volume boost
 - **🌐 Multi-Language**: English/Arabic interface, supports all Piper voice models
-- **🧹 Text Processing**: Optional cleaning, smart sentence splitting
+- **🧹 Text Processing**: Optional cleaning, smart sentence splitting, Legacy Mode for simplified playback
 
 ## 🚀 Quick Start
 
@@ -59,10 +59,11 @@ Download `piperAnywhereWizard.exe` from releases. May trigger antivirus false po
 ## 🎛️ Advanced Features
 
 ### Smart Playback
-- **Sentence-level control**: Navigate, pause, and resume at any sentence
-- **Mouse wheel navigation**: Hold CapsLock + scroll to jump between sentences
-- **Visual feedback**: Real-time tooltips show current sentence
-- **Index jumping**: Type sentence number to jump directly
+- **Sentence-level control**: Navigate, pause, and resume at any sentence (disabled in Legacy Mode)
+- **Mouse wheel navigation**: Hold CapsLock + scroll to jump between sentences (disabled in Legacy Mode)
+- **Visual feedback**: Real-time tooltips show current sentence (simplified in Legacy Mode)
+- **Index jumping**: Type sentence number to jump directly (disabled in Legacy Mode)
+- **Legacy Mode**: Disable sentence segmentation for improved performance on older devices; reads entire text at once with a short-duration tooltip.
 
 ### OCR Memory
 - **Area persistence**: Last OCR area automatically saved
