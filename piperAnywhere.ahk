@@ -88,7 +88,7 @@ class PiperTTSApp {
     }
     
     ; Show dependency information (can be called from UI)
-    ShowDependencyInfo() {
+    ShowDependencyInfo(*) {
         summary := this.dependencyChecker.GetDependencySummary()
         
         ; Add validation info
