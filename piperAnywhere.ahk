@@ -127,6 +127,7 @@ class PiperTTSApp {
             IniWrite(this.uiManager.controls.voiceDropdown.Value, this.settingsFile, "Settings", "VoiceIndex")
             IniWrite(this.audioSettings.speechSpeed, this.settingsFile, "Settings", "SpeechSpeed")
             IniWrite(this.audioSettings.volumeBoost, this.settingsFile, "Settings", "Volume")
+            IniWrite(this.audioSettings.pitchShift, this.settingsFile, "Settings", "Pitch")
             IniWrite(this.uiManager.controls.textBox.Text, this.settingsFile, "Settings", "LastText")
             IniWrite(this.uiManager.controls.languageDropdown.Value, this.settingsFile, "Settings", "LanguageIndex")
             IniWrite(this.audioSettings.minWordsPerSentence, this.settingsFile, "Settings", "MinWords")
@@ -143,6 +144,7 @@ class PiperTTSApp {
             voiceIndex := IniRead(this.settingsFile, "Settings", "VoiceIndex", 1)
             speechSpeed := IniRead(this.settingsFile, "Settings", "SpeechSpeed", 1.0)
             volume := IniRead(this.settingsFile, "Settings", "Volume", 2)
+            pitch := IniRead(this.settingsFile, "Settings", "Pitch", 1.0)
             languageIndex := IniRead(this.settingsFile, "Settings", "LanguageIndex", 1)
             minWords := IniRead(this.settingsFile, "Settings", "MinWords", 6)
             maxWords := IniRead(this.settingsFile, "Settings", "MaxWords", 25)
@@ -162,6 +164,7 @@ class PiperTTSApp {
             
             this.audioSettings.SetSpeed(speechSpeed)
             this.audioSettings.SetVolume(volume)
+            this.audioSettings.SetPitch(pitch)
             this.uiManager.controls.languageDropdown.Value := languageIndex
             this.uiManager.UpdateAllTexts()
             this.audioSettings.SetMinWords(minWords)
@@ -174,6 +177,8 @@ class PiperTTSApp {
             this.uiManager.controls.speedSlider.Value := Round(this.audioSettings.speechSpeed * 100)
             this.uiManager.controls.volumeInput.Text := this.audioSettings.volumeBoost
             this.uiManager.controls.volumeSlider.Value := this.audioSettings.volumeBoost
+            this.uiManager.controls.pitchInput.Text := Round(this.audioSettings.pitchShift, 2)
+            this.uiManager.controls.pitchSlider.Value := Round(this.audioSettings.pitchShift * 100)
             this.uiManager.controls.minWordsInput.Text := this.audioSettings.minWordsPerSentence
             this.uiManager.controls.maxWordsInput.Text := this.audioSettings.maxWordsPerSentence
             this.uiManager.controls.cleanTextCheckbox.Value := this.textCleaning

@@ -7,6 +7,7 @@ class AudioSettings {
         this.speechSpeed := 1.0
         this.volumeBoost := 2
         this.sentenceSilence := 0.2
+        this.pitchShift := 1.0
         this.minWordsPerSentence := 6
         this.maxWordsPerSentence := 25
         
@@ -39,6 +40,14 @@ class AudioSettings {
         return false
     }
     
+    SetPitch(pitch) {
+        if (IsNumber(pitch) && pitch > 0) {
+            this.pitchShift := pitch
+            return true
+        }
+        return false
+    }
+    
     SetMinWords(minWords) {
         if (IsNumber(minWords) && minWords > 0) {
             this.minWordsPerSentence := minWords
@@ -62,8 +71,14 @@ class AudioSettings {
         piperCmd .= ' --sentence_silence ' . this.sentenceSilence
         piperCmd .= ' --output-raw'
         
+        ; Build audio filter for ffplay
+        audioFilter := ""
+        if (this.pitchShift != 1.0) {
+            audioFilter := ' -af "asetrate=22050*' . this.pitchShift . ',atempo=' . (1/this.pitchShift) . ',aresample=22050"'
+        }
+        
         command := A_ComSpec . ' /c ' . piperCmd
-        command .= ' | "' . this.ffplayPath . '" -f s16le -ar 22050 -ch_layout mono -nodisp -autoexit -'
+        command .= ' | "' . this.ffplayPath . '" -f s16le -ar 22050 -ch_layout mono -nodisp -autoexit' . audioFilter . ' -'
         
         return command
     }

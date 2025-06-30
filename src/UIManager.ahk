@@ -30,6 +30,10 @@ class UIManager {
            "volumeLabel", "Volume:",
            "quietLabel", "Quiet",
            "loudLabel", "Loud",
+           "pitchLabel", "Pitch:",
+           "lowLabel", "Low",
+           "highLabel", "High",
+           "hzLabel", "Hz",
            "dbLabel", "dB",
            "readyStatus", "Ready",
            "hintsText", "💡 Hotkeys: CapsLock+C (Copy & Play) • CapsLock+X (OCR & Play) • CapsLock+Z (Refresh OCR) • CapsLock+S (Stop)",
@@ -89,6 +93,10 @@ class UIManager {
            "volumeLabel", "الصوت:",
            "quietLabel", "هادئ",
            "loudLabel", "عالي",
+           "pitchLabel", "الطبقة:",
+           "lowLabel", "منخفض",
+           "highLabel", "مرتفع",
+           "hzLabel", "هرتز",
            "dbLabel", "ديسيبل",
            "readyStatus", "جاهز",
            "hintsText", "💡 المفاتيح المختصرة: CapsLock+C (نسخ وتشغيل) • CapsLock+X (OCR وتشغيل) • CapsLock+Z (تحديث OCR) • CapsLock+S (إيقاف)",
@@ -196,7 +204,7 @@ class UIManager {
     }
     
     CreateAudioSection() {
-        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h110", this.GetText("audioGroup"))
+        this.controls.audioGroup := this.gui.AddGroupBox("x8 y124 w280 h130", this.GetText("audioGroup"))
         this.controls.audioGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Text cleaning toggle
@@ -224,60 +232,69 @@ class UIManager {
         this.controls.volumeInput.SetFont("s8 Bold")
         this.controls.dbLabel := this.gui.AddText("x+6 y178 w30 h16", this.GetText("dbLabel"))
         
+        ; Pitch control
+        this.controls.pitchLabel := this.gui.AddText("x16 y194", this.GetText("pitchLabel"))
+        this.controls.lowLabel := this.gui.AddText("x+6 y194", this.GetText("lowLabel"))
+        this.controls.pitchSlider := this.gui.AddSlider("x100 y192 w60 h20 Range50-200 NoTicks", 100)
+        this.controls.highLabel := this.gui.AddText("x+6 y194 w30 h16", this.GetText("highLabel"))
+        this.controls.pitchInput := this.gui.AddEdit("x+6 y194 w30 h16", "1.0")
+        this.controls.pitchInput.SetFont("s8 Bold")
+        this.controls.hzLabel := this.gui.AddText("x+6 y194 w30 h16", this.GetText("hzLabel"))
+        
         ; Word count controls
-        this.controls.minWordsLabel := this.gui.AddText("x16 y194 w40", this.GetText("minWordsLabel"))
-        this.controls.minWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "6")
+        this.controls.minWordsLabel := this.gui.AddText("x16 y214 w40", this.GetText("minWordsLabel"))
+        this.controls.minWordsInput := this.gui.AddEdit("x+6 y214 w30 h16", "6")
         this.controls.minWordsInput.SetFont("s8 Bold")
-        this.controls.maxWordsLabel := this.gui.AddText("x+6 y194 w40", this.GetText("maxWordsLabel"))
-        this.controls.maxWordsInput := this.gui.AddEdit("x+6 y194 w30 h16", "25")
+        this.controls.maxWordsLabel := this.gui.AddText("x+6 y214 w40", this.GetText("maxWordsLabel"))
+        this.controls.maxWordsInput := this.gui.AddEdit("x+6 y214 w30 h16", "25")
         this.controls.maxWordsInput.SetFont("s8 Bold")
     }
     
     CreateTextSection() {
-        this.controls.textGroup := this.gui.AddGroupBox("x8 y215 w280 h80", this.GetText("textGroup"))
+        this.controls.textGroup := this.gui.AddGroupBox("x8 y235 w280 h80", this.GetText("textGroup"))
         this.controls.textGroup.SetFont("s8 Bold", "Segoe UI")
         
-        this.controls.textBox := this.gui.AddEdit("x16 y235 w264 h54 VScroll", 
+        this.controls.textBox := this.gui.AddEdit("x16 y255 w264 h54 VScroll", 
                                             this.GetText("defaultText"))
     }
     
     CreateControlButtons() {
-        this.controls.buttonGroup := this.gui.AddGroupBox("x8 y290 w280 h80", this.GetText("controlsGroup"))
+        this.controls.buttonGroup := this.gui.AddGroupBox("x8 y310 w280 h80", this.GetText("controlsGroup"))
         this.controls.buttonGroup.SetFont("s8 Bold", "Segoe UI")
         
         ; Control buttons
-        this.controls.playButton := this.gui.AddButton("x16 y308 w50 h24 Default", this.GetText("playButton"))
+        this.controls.playButton := this.gui.AddButton("x16 y328 w50 h24 Default", this.GetText("playButton"))
         this.controls.playButton.SetFont("s8 Bold")
         
-        this.controls.pauseButton := this.gui.AddButton("x70 y308 w60 h24", this.GetText("pauseButton"))
+        this.controls.pauseButton := this.gui.AddButton("x70 y328 w60 h24", this.GetText("pauseButton"))
         this.controls.pauseButton.SetFont("s8 Bold")
         
-        this.controls.stopButton := this.gui.AddButton("x135 y308 w50 h24", this.GetText("stopButton"))
+        this.controls.stopButton := this.gui.AddButton("x135 y328 w50 h24", this.GetText("stopButton"))
         this.controls.stopButton.SetFont("s8 Bold")
         
         ; Navigation buttons  
-        this.controls.prevButton := this.gui.AddButton("x185 y308 w30 h24", "⏮")
+        this.controls.prevButton := this.gui.AddButton("x185 y328 w30 h24", "⏮")
         this.controls.prevButton.SetFont("s8 Bold")
         
-        this.controls.nextButton := this.gui.AddButton("x215 y308 w30 h24", "⏭")
+        this.controls.nextButton := this.gui.AddButton("x215 y328 w30 h24", "⏭")
         this.controls.nextButton.SetFont("s8 Bold")
         
         ; Sentence index selection
-        this.controls.sentenceIndexLabel := this.gui.AddText("x16 y338 w50 h16", this.GetText("sentenceIndexLabel"))
+        this.controls.sentenceIndexLabel := this.gui.AddText("x16 y358 w50 h16", this.GetText("sentenceIndexLabel"))
         this.controls.sentenceIndexLabel.SetFont("s8")
         
-        this.controls.sentenceIndexInput := this.gui.AddEdit("x70 y336 w40 h20", "1")
+        this.controls.sentenceIndexInput := this.gui.AddEdit("x70 y356 w40 h20", "1")
         this.controls.sentenceIndexInput.SetFont("s8 Bold")
     }
     
     CreateStatusSection() {
-        this.controls.statusLabel := this.gui.AddText("x8 y354 w320 h16 Center", this.GetText("readyStatus"))
+        this.controls.statusLabel := this.gui.AddText("x8 y374 w320 h16 Center", this.GetText("readyStatus"))
         this.controls.statusLabel.SetFont("s8", "Segoe UI")
         
-        this.controls.qualityLabel := this.gui.AddText("x8 y370 w320 h16 Center", "")
+        this.controls.qualityLabel := this.gui.AddText("x8 y390 w320 h16 Center", "")
         this.controls.qualityLabel.SetFont("s7", "Segoe UI")
         
-        this.controls.hintLabel := this.gui.AddText("x8 y386 w320 h32 Center", 
+        this.controls.hintLabel := this.gui.AddText("x8 y406 w320 h32 Center", 
                                               this.GetText("hintsText"))
         this.controls.hintLabel.SetFont("s7", "Segoe UI")
     }
@@ -299,6 +316,8 @@ class UIManager {
         this.controls.speedInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnSpeedInputChanged"))
         this.controls.volumeSlider.OnEvent("Change", ObjBindMethod(this, "OnVolumeChanged"))
         this.controls.volumeInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnVolumeInputChanged"))
+        this.controls.pitchSlider.OnEvent("Change", ObjBindMethod(this, "OnPitchChanged"))
+        this.controls.pitchInput.OnEvent("LoseFocus", ObjBindMethod(this, "OnPitchInputChanged"))
         this.controls.playButton.OnEvent("Click", ObjBindMethod(this, "OnPlayText"))
         this.controls.stopButton.OnEvent("Click", ObjBindMethod(this, "OnStopPlayback"))
         this.controls.pauseButton.OnEvent("Click", ObjBindMethod(this, "OnPausePlayback"))
@@ -345,6 +364,10 @@ class UIManager {
         this.controls.volumeLabel.Text := this.GetText("volumeLabel")
         this.controls.quietLabel.Text := this.GetText("quietLabel")
         this.controls.loudLabel.Text := this.GetText("loudLabel")
+        this.controls.pitchLabel.Text := this.GetText("pitchLabel")
+        this.controls.lowLabel.Text := this.GetText("lowLabel")
+        this.controls.highLabel.Text := this.GetText("highLabel")
+        this.controls.hzLabel.Text := this.GetText("hzLabel")
         this.controls.dbLabel.Text := this.GetText("dbLabel")
         
         ; Update hints
@@ -431,6 +454,25 @@ class UIManager {
         this.controls.statusLabel.Text := this.GetText("volumeSet") . " " . Round(this.audioSettings.volumeBoost, 1) . this.GetText("dbLabel")
     }
     
+    OnPitchChanged(*) {
+        pitch := this.controls.pitchSlider.Value / 100.0
+        this.audioSettings.SetPitch(pitch)
+        this.controls.pitchInput.Text := Round(pitch, 2)
+    }
+    
+    OnPitchInputChanged(*) {
+        newPitch := this.controls.pitchInput.Text
+        
+        if (!this.audioSettings.SetPitch(newPitch)) {
+            this.controls.statusLabel.Text := "❌ Invalid pitch: Not a number"
+            this.controls.pitchInput.Text := Round(this.audioSettings.pitchShift, 2)
+            return
+        }
+        
+        this.controls.pitchSlider.Value := Round(this.audioSettings.pitchShift * 100)
+        this.controls.statusLabel.Text := "Pitch set to " . Round(this.audioSettings.pitchShift, 2) . "x"
+    }
+    
     OnPlayText(*) {
         ; Validate inputs before playback
         if (!IsNumber(this.controls.speedInput.Text)) {
@@ -448,6 +490,14 @@ class UIManager {
             return
         }
         this.OnVolumeInputChanged()
+        
+        if (!IsNumber(this.controls.pitchInput.Text)) {
+            MsgBox("Please enter a valid number for pitch.", "Invalid Pitch", "Iconx")
+            this.controls.pitchInput.Text := Round(this.audioSettings.pitchShift, 2)
+            this.controls.statusLabel.Text := "❌ Invalid pitch input"
+            return
+        }
+        this.OnPitchInputChanged()
         
         this.ttsPlayer.PlayText(this.controls.textBox, this.controls.voiceDropdown, 
                                this.controls.statusLabel, this.controls.playButton, this.controls.stopButton)
@@ -478,6 +528,14 @@ class UIManager {
             return
         }
         this.OnVolumeInputChanged()
+        
+        if (!IsNumber(this.controls.pitchInput.Text)) {
+            MsgBox("Please enter a valid number for pitch.", "Invalid Pitch", "Iconx")
+            this.controls.pitchInput.Text := Round(this.audioSettings.pitchShift, 2)
+            this.controls.statusLabel.Text := "❌ Invalid pitch input"
+            return
+        }
+        this.OnPitchInputChanged()
         
         this.ttsPlayer.SaveAudio(this.controls.textBox, this.controls.voiceDropdown, this.controls.statusLabel)
     }
@@ -524,7 +582,7 @@ class UIManager {
     }
     
     ShowGUI() {
-        this.gui.Show("w336 h418")
+        this.gui.Show("w336 h438")
     }
     
     GetTextBox() {
